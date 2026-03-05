@@ -2,12 +2,24 @@
 // Ele pode ser implementado usando bibliotecas como JWT (JSON Web Tokens) para criar e verificar tokens de autenticação, ou usando sessões para armazenar informações do usuário no servidor.
 
 import { prismaClient } from "../../prisma/prisma"
-import { RegisterInput } from "../dtos/input/auth.input"
-import { hashPassword } from "../utils/hash"
+import { LoginInput, RegisterInput } from "../dtos/input/auth.input"
+import { comparePassword, hashPassword } from "../utils/hash"
 import { User } from "@prisma/client"
 import { signJwt } from "../utils/jwt"
 
 export class AuthService {
+     async login(data: LoginInput) {
+        const existingUser = await prismaClient.user.findUnique({
+        where: {
+            email: data.email,
+        },
+        })
+        if (!existingUser) throw new Error('Usuário não cadastrado!')
+        const compare = await comparePassword(data.password, existingUser.password)
+        if (!compare) throw new Error('Senha inválida!')
+        return this.gerenerateTokens(existingUser)
+    }
+
     async register(data: RegisterInput){
         const existingUser = await prismaClient.user.findUnique({
             where: {

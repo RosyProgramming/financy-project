@@ -12,3 +12,15 @@ export class RegisterOutput {
   @Field(() => UserModel)
   user!: UserModel 
 }
+
+@ObjectType()
+export class LoginOutput {
+  @Field(() => String)
+  token!: string
+
+  @Field(() => String)
+  refreshToken!: string
+
+  @Field(() => UserModel)
+  user!: UserModel
+}
