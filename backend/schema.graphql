@@ -45,6 +45,6 @@ type UserModel {
   email: String!
   fullName: String!
   id: ID!
-  password: String!
+  password: String
   updatedAt: DateTimeISO!
 }

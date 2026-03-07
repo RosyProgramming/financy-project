@@ -10,9 +10,9 @@ import { signJwt } from "../utils/jwt"
 export class AuthService {
      async login(data: LoginInput) {
         const existingUser = await prismaClient.user.findUnique({
-        where: {
-            email: data.email,
-        },
+            where: {
+                email: data.email,
+            },
         })
         if (!existingUser) throw new Error('Usuário não cadastrado!')
         const compare = await comparePassword(data.password, existingUser.password)
