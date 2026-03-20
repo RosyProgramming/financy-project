@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import 'dotenv/config'
 import express from 'express'
+import cors from 'cors'
 import { ApolloServer } from '@apollo/server'
 import { buildSchema } from 'type-graphql'
 import { expressMiddleware } from '@as-integrations/express5'
@@ -10,10 +11,16 @@ import { buildContext } from './graphql/context'
 import { TransactionResolver } from './resolvers/transaction.resolver'
 import { CategoryResolver } from './resolvers/category.resolver'
 
+
 async function bootstrap() {
     
    const app = express()
 
+    app.use(cors({
+        origin: "http://localhost:5173", // seu frontend
+        credentials: true
+    }))
+    
    const schema = await buildSchema({
         resolvers: [
             AuthResolver,

@@ -1,11 +1,20 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { RegisterInput, User } from '../types';
+import type { LoginInput, RegisterInput, User } from '../types';
 import { apolloClient } from '@/lib/apollo'
 import { REGISTER } from '@/lib/graphql/mutations/Register';
+import { LOGIN } from '@/lib/graphql/mutations/Login';
 
 type RegisterMutationData = {
     register: {
+        token: string;
+        refreshToken: string;
+        user: User;
+    }
+}
+
+type LoginMutationData = {
+    login: {
         token: string;
         refreshToken: string;
         user: User;
@@ -17,9 +26,8 @@ interface AuthState{
  token: string | null;
  refreshToken: string | null;
  isAuthenticated: boolean;
-//  login: (user: User, token: string, refreshToken: string) => void;
-//  logout: () => void;
-cadastro: (data: RegisterInput) => Promise<boolean>;
+ signup: (data: RegisterInput) => Promise<boolean>;
+ login: (data: LoginInput) => Promise<boolean>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -29,9 +37,7 @@ export const useAuthStore = create<AuthState>()(
         token: null,
         refreshToken: null,
         isAuthenticated: false,
-        // login: (user, token, refreshToken) => set({ user, token, refreshToken, isAuthenticated: true }),
-        // logout: () => set({ user: null, token: null, refreshToken: null, isAuthenticated: false }),
-        cadastro: async (registerData: RegisterInput) => {
+        signup: async (registerData: RegisterInput) => {
             try{
                 const { data } = await  apolloClient
                 .mutate<RegisterMutationData>({
@@ -54,12 +60,44 @@ export const useAuthStore = create<AuthState>()(
                         createdAt: user.createdAt,
                         updatedAt: user.updatedAt
                     }, token, isAuthenticated: true });
+
+                    return true;
                 }
+                return false
 
             }catch(error){
-                console.error("Erro ao cadastrar:", error);
+                console.log("Erro ao cadastrar:", error);
+                throw error;
             }
-            return false
+        },
+        login: async (loginData: LoginInput) => {
+            try {
+                const { data } = await apolloClient.mutate<LoginMutationData>({
+                    mutation: LOGIN,
+                    variables: {
+                        data: {
+                            email: loginData.email,
+                            password: loginData.password
+                        }
+                    }
+                });
+
+                if (data?.login) {
+                    const { token, refreshToken, user } = data.login;
+                    set({ user: {
+                        id: user.id,
+                        fullName: user.fullName,
+                        email: user.email,
+                        createdAt: user.createdAt,
+                        updatedAt: user.updatedAt
+                    }, token, refreshToken, isAuthenticated: true });
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.log("Erro ao fazer login:", error);
+                throw error;
+            }
         }
     }),
     {

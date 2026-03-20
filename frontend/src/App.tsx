@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Login } from './pages/Login'
-import { Cadastro } from './pages/Cadastro'
+import { Signup } from './pages/Signup'
 
 function App() {
 
@@ -11,7 +11,10 @@ function App() {
         <Route path='/' element={<Login />} />
       </Routes>
       <Routes>
-        <Route path='/cadastro' element={<Cadastro />} />
+        <Route path='/login' element={<Login />} />
+      </Routes>
+      <Routes>
+        <Route path='/signup' element={<Signup />} />
       </Routes>
     </Layout>
   )
