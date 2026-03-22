@@ -21,7 +21,7 @@ import {
 import { useAuthStore } from "@/stores/auth";
 import { toast } from "sonner";
 
-export function Signup() {
+export function SignupPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +50,7 @@ export function Signup() {
   //  FUNÇÃO PADRÃO DE ESTADO
   const getLabelState = (
     field: string,
-    value: string,
+    _value: string,
     error: string,
     disabled?: boolean
   ) => {

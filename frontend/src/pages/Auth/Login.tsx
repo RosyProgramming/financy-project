@@ -6,7 +6,7 @@ import { Mail, Lock, Eye, EyeClosed, UserRoundPlus } from "lucide-react"
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth"
 
-export function Login() {
+export function LoginPage() {
   // Inicializa direto do localStorage
   const [email, setEmail] = useState(() => localStorage.getItem("email") || "");
   const [password, setPassword] = useState(() => localStorage.getItem("password") || "");

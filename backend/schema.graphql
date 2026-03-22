@@ -71,6 +71,7 @@ type Mutation {
   resetPassword(data: ResetPasswordInput!): ResetPasswordOutput!
   updateCategory(data: UpdateCategoryInput!, id: String!): CategoryModel!
   updateTransaction(data: UpdateTransactionInput!, id: String!): TransactionModel!
+  updateUser(data: UpdateUserInput!): UserModel!
 }
 
 type Query {
@@ -130,6 +131,10 @@ input UpdateTransactionInput {
   date: DateTimeISO
   description: String
   type: String
+}
+
+input UpdateUserInput {
+  fullName: String
 }
 
 type UserModel {
