@@ -5,6 +5,9 @@ import { useAuthStore } from "@/stores/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export function ProfilePage() {
   const user = useAuthStore((state) => state.user);
@@ -60,29 +63,29 @@ export function ProfilePage() {
         <form onSubmit={handleSave} className="flex flex-col gap-4 w-full">
             {/* Full Name */}
             <div className="flex flex-col gap-2 w-full">
-                <label className="text-gray-700 font-medium text-sm">Nome Completo</label>
-                <div className="flex items-center gap-3 w-full h-12 px-3 border border-gray-300 rounded-lg">
-                    <User className="w-4 h-4 text-gray-400" />
-                    <input
+                <Label className="text-gray-700 font-medium text-sm">Nome Completo</Label>
+                <div className="relative w-full">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="flex-1 outline-none text-gray-800"
+                    className="w-full h-12 pl-10 pr-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400"
                     />
                 </div>
             </div>
 
             {/* Email */}
             <div className="flex flex-col gap-2 w-full">
-                <label className="text-gray-700 font-medium text-sm">E-mail</label>
-                <div className="flex items-center gap-3 w-full h-12 px-3 border border-gray-300 rounded-lg">
-                    <Mail className="w-4 h-4 text-gray-400" />
-                    <input
+                <Label className="text-gray-700 font-medium text-sm">E-mail</Label>
+                <div className="relative w-full">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
                     type="email"
                     placeholder="conta@teste.com"
                     defaultValue={user?.email ?? ""}
                     readOnly
-                    className="flex-1 outline-none text-gray-800"
+                    className="w-full h-12 pl-10 pr-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400"
                     />
                 </div>
                 <span className="text-xs text-gray-500">
@@ -90,15 +93,15 @@ export function ProfilePage() {
                 </span>
             </div>
             <div className="flex flex-col gap-4 w-full">
-                <button 
+                <Button 
                     type="submit"
                     disabled={loading}
                     className="flex items-center justify-center gap-2 w-[382px] h-12 px-4 py-3 bg-brand text-gray-100 rounded-lg font-medium hover:bg-brand-dark transition-colors disabled:opacity-50 mx-auto">
                     <UserRoundPlus className="w-4 h-4" /> 
                     Salvar alterações
-                </button>
+                </Button>
 
-                <button
+                <Button
                     className="flex items-center justify-center gap-2 w-[382px] h-12 px-4 py-3 border border-gray-300 bg-white rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50 mx-auto"
                     onClick={() => {
                         logout()
@@ -107,7 +110,7 @@ export function ProfilePage() {
                 >
                 <LogOut className="w-[18px] h-[18px] text-danger" />
                     Sair da conta
-                </button>
+                </Button>
             </div>
         </form>
     </Card>

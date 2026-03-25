@@ -115,7 +115,7 @@ export function CreateTransactionDialog({
                             placeholder="Ex. Almoço no restaurante"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400 text-base font-normal"
+                            className="w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400 text-base font-normal focus:outline-none"
                         />
                     </div>
 
@@ -161,7 +161,7 @@ export function CreateTransactionDialog({
                                 placeholder="R$ 0,00"
                                 value={amount}
                                 onChange={handleAmountChange}
-                                className="w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400 text-base font-normal"
+                                className="w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400 text-base font-normal focus:outline-none"
                             />
                         </div>
                     </div>
