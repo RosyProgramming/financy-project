@@ -5,6 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Mail, Lock, Eye, EyeClosed, UserRoundPlus } from "lucide-react"
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth"
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export function LoginPage() {
   // Inicializa direto do localStorage
@@ -176,16 +180,16 @@ export function LoginPage() {
 
             {/* === EMAIL === */}
             <div className="flex flex-col gap-2 w-full">
-              <label
+              <Label
                 htmlFor="email"
                 className={`text-sm font-medium  ${getLabelState("email", email, errors.email, loading)}`}
               >
                 E-mail
-              </label>
+              </Label>
               <div className="relative w-full">
                 {/* Ícone de email */}
                 <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${getIconState("email", email, errors.email, loading)}`} />
-                <input
+                <Input
                   id="email"
                   type="email"
                   placeholder="mail@exemplo.com"
@@ -206,16 +210,16 @@ export function LoginPage() {
 
             {/* === SENHA === */}
             <div className="flex flex-col gap-2 w-full">
-              <label
+              <Label
                 htmlFor="password"
                 className={`text-sm font-medium ${getLabelState("password", password, errors.password, loading)}`}
               >
                 Senha
-              </label>
+              </Label>
               <div className="relative w-full">
                 {/* Ícone de senha */}
                 <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${getIconState("password", password, errors.password, loading)}`} />
-                <input
+                <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Digite sua senha"
@@ -228,7 +232,7 @@ export function LoginPage() {
                   }}
                   className="w-full h-12 pl-10 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none"
                 />
-                <button
+                <Button
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                   onClick={() => setShowPassword(!showPassword)}
@@ -238,7 +242,7 @@ export function LoginPage() {
                   ) : (
                     <EyeClosed className="w-4 h-4 text-gray-400" />
                   )}
-                </button>
+                </Button>
               </div>
               {touched.password && errors.password && (
                 <span className="text-xs text-danger">
@@ -249,35 +253,35 @@ export function LoginPage() {
 
             {/* === Lembrar-me e Esqueceu a senha === */}
             <div className="flex justify-between items-center w-full text-sm text-gray-700">
-              <label className="flex items-center gap-2">
-                <input
+              <Label className="flex items-center gap-2">
+                <Input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
                   className="w-4 h-4 border border-gray-300 rounded"
                 />
                 Lembrar-me
-              </label>
+              </Label>
               <a href="#" className="text-sm font-medium text-brand hover:underline">
                 Recuperar a senha?
               </a>
             </div>
 
             {/* === BOTÃO LOGIN === */}
-            <button
+            <Button
               type="submit"
               disabled={loading}
               className="w-full max-w-[382px] h-12 flex items-center justify-center gap-2 px-4 py-3 bg-brand text-white font-medium rounded-lg hover:bg-brand-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserRoundPlus className="w-4 h-4" />
               Entrar
-            </button>
+            </Button>
 
             {/* === DIVISOR HORIZONTAL === */}
             <div className="flex items-center gap-3 h-5">
-              <hr className="flex-grow border-t border-gray-300 m-0" />
+              <Separator className="flex-grow border-t border-gray-300 m-0" />
               <span className="text-gray-500 text-sm">ou</span>
-              <hr className="flex-grow border-t border-gray-300 m-0" />
+              <Separator className="flex-grow border-t border-gray-300 m-0" />
             </div>
 
             {/* === BOTÃO CRIAR CONTA === */}

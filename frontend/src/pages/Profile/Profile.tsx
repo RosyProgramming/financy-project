@@ -4,6 +4,7 @@ import { User, Mail, LogOut, UserRoundPlus, CheckCircle } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 
 export function ProfilePage() {
   const user = useAuthStore((state) => state.user);
@@ -53,7 +54,7 @@ export function ProfilePage() {
         </div>
       </CardHeader>
 
-      <div className="w-[382px] h-px bg-gray-200 mx-auto" />
+      <Separator className="w-[382px] h-px bg-gray-200 mx-auto" />
 
       {/* Inputs */}
         <form onSubmit={handleSave} className="flex flex-col gap-4 w-full">

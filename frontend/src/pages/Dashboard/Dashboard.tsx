@@ -10,9 +10,16 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card"
+import { useState } from "react"
+import { Page } from "@/components/Page"
+import { CreateTransactionDialog } from "../Transaction/components/CreateTransactionDialog"
+import { Button } from "@/components/ui/button"
 
 export function DashboardPage() {
+    const [openDialog, setOpenDialog] = useState(false)
+
   return (
+    <Page>
     <div className="w-full flex flex-col gap-8">
 
         {/* 🔹 TOP CARDS */}
@@ -72,13 +79,16 @@ export function DashboardPage() {
                 </CardContent>
 
                 <CardHeader className="flex justify-center items-center px-6 py-5 gap-2 h-[60px]">
-                <button className="flex items-center gap-1 text-sm font-medium text-brand hover:opacity-80">
+                <Button onClick={() => setOpenDialog(true)}
+                    className="flex items-center gap-1 text-sm font-medium text-brand hover:opacity-80">
                     <Plus className="w-5 h-5 text-brand" />
                     <span>Adicionar transação</span>
-                </button>
+                </Button>
                 </CardHeader>
             </Card>
 
+            <CreateTransactionDialog open={openDialog} onOpenChange={setOpenDialog} onSuccess={() => {}} />
+                
             {/* CATEGORIAS */}
             <Card className="border border-gray-200">
                 <CardHeader className="flex flex-row justify-between items-center border-b px-6 py-5">
@@ -112,5 +122,6 @@ export function DashboardPage() {
         </div>
 
     </div>
+    </Page>
   )
 }

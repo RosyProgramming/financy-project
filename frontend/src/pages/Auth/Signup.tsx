@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import {
   Mail,
@@ -20,6 +20,10 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export function SignupPage() {
   const [fullName, setFullName] = useState("");
@@ -171,7 +175,7 @@ export function SignupPage() {
           >
             {/* === NOME COMPLETO === */}
             <div className="flex flex-col gap-2 w-full">
-              <label
+              <Label
                 htmlFor="fullName"
                 className={`text-sm font-medium ${getLabelState(
                   "fullName",
@@ -181,7 +185,7 @@ export function SignupPage() {
                 )}`}
               >
                 Nome completo
-              </label>
+              </Label>
 
               <div className="relative w-full">
                 <UserRound
@@ -193,7 +197,7 @@ export function SignupPage() {
                   )}`}
                 />
 
-                <input
+                <Input
                   id="fullName"
                   type="text"
                   placeholder="Seu nome completo"
@@ -215,7 +219,7 @@ export function SignupPage() {
 
             {/* === EMAIL === */}
             <div className="flex flex-col gap-2 w-full">
-              <label
+              <Label
                 htmlFor="email"
                 className={`text-sm font-medium ${getLabelState(
                   "email",
@@ -225,7 +229,7 @@ export function SignupPage() {
                 )}`}
               >
                 E-mail
-              </label>
+              </Label>
 
               <div className="relative w-full">
                 <Mail
@@ -259,7 +263,7 @@ export function SignupPage() {
 
             {/* === SENHA === */}
             <div className="flex flex-col gap-2 w-full">
-              <label
+              <Label
                 htmlFor="password"
                 className={`text-sm font-medium ${getLabelState(
                   "password",
@@ -269,7 +273,7 @@ export function SignupPage() {
                 )}`}
               >
                 Senha
-              </label>
+              </Label>
 
               <div className="relative w-full">
                 <Lock
@@ -281,7 +285,7 @@ export function SignupPage() {
                   )}`}
                 />
 
-                <input
+                <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Digite sua senha"
@@ -296,7 +300,7 @@ export function SignupPage() {
                   className="w-full h-12 pl-10 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none"
                 />
 
-                <button
+                <Button
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                   onClick={() => setShowPassword(!showPassword)}
@@ -306,7 +310,7 @@ export function SignupPage() {
                   ) : (
                     <EyeClosed className="w-4 h-4 text-gray-400" />
                   )}
-                </button>
+                </Button>
               </div>
               
                {touched.password && errors.password ? (
@@ -321,20 +325,20 @@ export function SignupPage() {
             </div>
 
             {/* === BOTÃO CADASTRAR === */}
-            <button
+            <Button
               type="submit"
               disabled={loading}
               className="w-full h-12 flex items-center justify-center gap-2 bg-brand text-white font-medium rounded-lg hover:bg-brand-dark transition-colors disabled:opacity-50"
             >
               <UserRoundPlus className="w-4 h-4" />
               Cadastrar
-            </button>
+            </Button>
 
             {/* === DIVISOR === */}
             <div className="flex items-center gap-3">
-              <hr className="flex-grow border-t border-gray-300" />
+              <Separator className="flex-grow border-t border-gray-300" />
               <span className="text-gray-500 text-sm">ou</span>
-              <hr className="flex-grow border-t border-gray-300" />
+              <Separator className="flex-grow border-t border-gray-300" />
             </div>
 
             {/* === LOGIN === */}
@@ -343,13 +347,13 @@ export function SignupPage() {
                 Já tem uma conta?
               </span>
 
-              <button
+              <Button
                 type="button"
                 className="w-full h-12 flex items-center justify-center gap-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors"
               >
                 <LogIn className="w-4 h-4" />
                 <Link to="/login">Fazer login</Link>
-              </button>
+              </Button>
             </div>
           </form>
         </CardContent>
