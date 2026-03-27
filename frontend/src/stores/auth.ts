@@ -115,8 +115,7 @@ export const useAuthStore = create<AuthState>()(
             });
 
             // limpa o localStorage do persist
-            localStorage.removeItem("auth-storage");
-            await apolloClient.clearStore();
+             apolloClient.clearStore();
         },
         updateUser: async (userData: UpdateUserInput) => {
             try {

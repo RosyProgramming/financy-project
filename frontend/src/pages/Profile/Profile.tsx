@@ -37,7 +37,12 @@ export function ProfilePage() {
         } finally {
             setLoading(false);
         }
-    };
+    }
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    }
 
   return (
     <div className="w-full flex flex-col p-8 items-center gap-8">
@@ -103,10 +108,7 @@ export function ProfilePage() {
 
                 <Button
                     className="flex items-center justify-center gap-2 w-[382px] h-12 px-4 py-3 border border-gray-300 bg-white rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50 mx-auto"
-                    onClick={() => {
-                        logout()
-                        navigate("/login");
-                    }}
+                    onClick={handleLogout}
                 >
                 <LogOut className="w-[18px] h-[18px] text-danger" />
                     Sair da conta
