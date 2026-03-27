@@ -1,11 +1,18 @@
 import { useAuthStore } from "@/stores/auth"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import logoIcon from "@/assets/logo-icon.svg"
-import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback } from "./ui/avatar"
 
 export function Navbar() {
   const { user } = useAuthStore()
-  const navigate = useNavigate()
+ 
+  function getLinkClass(isActive: boolean) {
+    return `text-sm transition-colors ${
+      isActive
+        ? "text-brand font-semibold"
+        : "text-gray-600"
+    }`
+  }
 
   return (
     <header className="w-full bg-white border-b border-gray-200">
@@ -21,24 +28,36 @@ export function Navbar() {
 
         {/* NAV CENTRAL */}
         <nav className="absolute left-1/2 -translate-x-1/2 flex gap-6">
-          <Link to="/" className="text-sm font-semibold text-brand">
+          <NavLink 
+            to="/" 
+            className={({ isActive }) => getLinkClass(isActive)}
+          >
             Dashboard
-          </Link>
-          <Link to="/transactions" className="text-sm text-gray-600">
+          </NavLink>
+
+          <NavLink 
+            to="/transactions" 
+            className={({ isActive }) => getLinkClass(isActive)}
+          >
             Transações
-          </Link>
-          <Link to="/categories" className="text-sm text-gray-600">
+          </NavLink>
+
+          <NavLink 
+            to="/categories" 
+            className={({ isActive }) => getLinkClass(isActive)}
+          >
             Categorias
-          </Link>
+          </NavLink>
         </nav>
 
         {/* PROFILE */}
-        <div
-          className="ml-auto w-9 h-9 flex items-center justify-center rounded-full bg-gray-300 text-sm font-medium text-gray-800 cursor-pointer"
-          onClick={() => navigate("/profile")} 
-        >
-          {user?.fullName?.[0] ?? "U"}
-        </div>
+        <Link to="/profile" className="ml-auto">
+        <Avatar className="w-9 h-9 cursor-pointer">
+          <AvatarFallback className="bg-gray-300 text-gray-800 text-sm font-medium">
+            {user?.fullName?.[0] ?? "U"}
+          </AvatarFallback>
+        </Avatar>
+      </Link>
       </div>
     </header>
   )
