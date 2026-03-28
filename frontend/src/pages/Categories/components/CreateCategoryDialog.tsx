@@ -12,8 +12,11 @@ import { useState } from "react"
 import {
     BriefcaseBusiness, CarFront, HeartPulse, PiggyBank, ShoppingCart, Ticket,
     ToolCase, Utensils, PawPrint, House, Gift, Dumbbell,
-    BookOpen, BaggageClaim, Mailbox, ReceiptText
+    BookOpen, BaggageClaim, Mailbox, ReceiptText, CheckCircle
 } from "lucide-react"
+import { useMutation } from "@apollo/client/react"
+import { CREATE_CATEGORIES } from "@/lib/graphql/mutations/Categories"
+import { toast } from "sonner";
 
 interface CreateCategoryDialogProps {
     open: boolean
@@ -41,13 +44,13 @@ const icons = [
 ]
 
 const colors = [
-    { key: "green",  rect: "bg-green-base",  border: "border-brand",   bg: "bg-gray-100" },
-    { key: "blue",   rect: "bg-blue-base",   border: "border-gray-300", bg: "bg-transparent" },
-    { key: "purple", rect: "bg-purple-base", border: "border-gray-300", bg: "bg-transparent" },
-    { key: "pink",   rect: "bg-pink-base",   border: "border-gray-300", bg: "bg-transparent" },
-    { key: "red",    rect: "bg-red-base",    border: "border-gray-300", bg: "bg-transparent" },
-    { key: "orange", rect: "bg-orange-base", border: "border-gray-300", bg: "bg-transparent" },
-    { key: "yellow", rect: "bg-yellow-base", border: "border-gray-300", bg: "bg-transparent" }
+  { key: "green",  rect: "bg-green-base" },
+  { key: "blue",   rect: "bg-blue-base" },
+  { key: "purple", rect: "bg-purple-base" },
+  { key: "pink",   rect: "bg-pink-base" },
+  { key: "red",    rect: "bg-red-base" },
+  { key: "orange", rect: "bg-orange-base" },
+  { key: "yellow", rect: "bg-yellow-base" }
 ]
 
 
@@ -61,8 +64,54 @@ export function CreateCategoryDialog({
     const [selectedIcon, setSelectedIcon] = useState("briefcase")
     const [selectedColor, setSelectedColor] = useState("green")
 
+    const [ createCategory, { loading } ] = useMutation(CREATE_CATEGORIES)
+
+    const handleOpenChange = (isOpen: boolean) => {
+        onOpenChange(isOpen)
+
+        if (!isOpen) {
+            setTitle("")
+            setDescription("")
+            setSelectedIcon("briefcase")
+            setSelectedColor("green")
+        }
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            await createCategory({
+            variables: {
+                data: {
+                title,
+                description,
+                icon: selectedIcon,
+                color: selectedColor,
+                }
+            }
+            })
+
+            toast.success("Categoria criada com sucesso", {
+                icon: <CheckCircle className="text-success w-5 h-5" />
+            })
+            handleOpenChange(false)
+            onSuccess()
+
+        } catch (error: any) {
+            const message =
+                error?.graphQLErrors?.[0]?.message ||
+                error?.message ||
+                "Erro ao criar categoria"
+
+            toast.error(message, {
+                icon: <CheckCircle className="text-danger w-5 h-5" />
+            })
+        }
+    }
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className="w-full max-w-[448px] p-6 gap-6">
                 {/* Header: flex-row, gap-4, h-[46px] */}
                 <DialogHeader className="flex flex-row items-start gap-4 w-full h-[46px]">
@@ -81,7 +130,7 @@ export function CreateCategoryDialog({
                 </DialogHeader>
 
                 {/* Form: flex-col, gap-4 */}
-                <div className="flex flex-col items-start gap-4 w-full">
+                <form onSubmit={handleSubmit} className="flex flex-col items-start gap-4 w-full">
 
                     {/* Título: flex-col gap-2 */}
                     <div className="flex flex-col items-start gap-2 w-full">
@@ -95,6 +144,7 @@ export function CreateCategoryDialog({
                             placeholder="Ex. Alimentação"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
+                            disabled={loading}
                             className="w-full h-12 px-3  py-[14px] border border-gray-300 rounded-lg"
                         />
                     </div>
@@ -117,6 +167,7 @@ export function CreateCategoryDialog({
                             placeholder="Descrição da categoria"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                            disabled={loading}
                             className="w-full h-12 px-3  py-[14px] border border-gray-300 rounded-lg"
                         />
                     </div>
@@ -154,34 +205,33 @@ export function CreateCategoryDialog({
                         </Label>
                         {/* Frame 2: flex-row gap-2 — cada item: w-[50px] h-[30px] p-1 rounded-lg border */}
                         <div className="flex flex-row items-start gap-2 w-full">
-                            {colors.map(({ key, rect, border, bg }) => (
-                                <Button
-                                    key={key}
-                                    type="button"
-                                    onClick={() => setSelectedColor(key)}
-                                    className={`flex justify-center items-center flex-1 h-[30px] p-1 rounded-lg border transition-all
-                                        ${selectedColor === key
-                                            ? `${bg} ${border}`
-                                            : "bg-transparent border-gray-300 hover:border-gray-400"
-                                        }`}
-                                >
-                                    {/* Rectangle inner: rounded-[4px] h-5 flex-1 */}
-                                    <div className={`w-full h-5 rounded-[4px] ${rect}`} />
-                                </Button>
+                            {colors.map(({ key, rect }) => (
+                            <button
+                                key={key}
+                                type="button"
+                                onClick={() => setSelectedColor(key)}
+                                className={`flex justify-center items-center flex-1 h-[30px] p-1 rounded-lg border transition-all
+                                ${
+                                    selectedColor === key
+                                    ? "bg-gray-100 border-brand"
+                                    : "bg-transparent border-gray-300 hover:border-gray-400"
+                                }`}
+                            >
+                                <div className={`w-full h-5 rounded-[4px] ${rect}`} />
+                            </button>
                             ))}
                         </div>
                     </div>
 
                     {/* Botão Salvar: h-12 bg-brand rounded-lg text-white font-medium */}
                     <Button
-                        type="button"
-                        onClick={onSuccess}
+                        type="submit"
                         className="flex justify-center items-center px-4 py-3 gap-2 w-full h-12 bg-brand rounded-lg text-base font-medium  text-white hover:bg-brand-dark transition-colors"
                     >
                         Salvar
                     </Button>
 
-                </div>
+                </form>
             </DialogContent>
         </Dialog>
     )

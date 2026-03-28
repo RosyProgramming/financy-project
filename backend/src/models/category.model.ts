@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from "type-graphql"
+import { UserModel } from "./user.models"
 
 @ObjectType()
 export class CategoryModel {
