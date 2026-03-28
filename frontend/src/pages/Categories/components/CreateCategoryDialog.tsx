@@ -37,7 +37,7 @@ const icons = [
     { key: "bookopen",          icon: BookOpen },
     { key: "baggage",           icon: BaggageClaim },
     { key: "mailbox",           icon: Mailbox },
-    { key: "receipt",           icon: ReceiptText },
+    { key: "receipt",           icon: ReceiptText }
 ]
 
 const colors = [
@@ -47,8 +47,9 @@ const colors = [
     { key: "pink",   rect: "bg-pink-base",   border: "border-gray-300", bg: "bg-transparent" },
     { key: "red",    rect: "bg-red-base",    border: "border-gray-300", bg: "bg-transparent" },
     { key: "orange", rect: "bg-orange-base", border: "border-gray-300", bg: "bg-transparent" },
-    { key: "yellow", rect: "bg-yellow-base", border: "border-gray-300", bg: "bg-transparent" },
+    { key: "yellow", rect: "bg-yellow-base", border: "border-gray-300", bg: "bg-transparent" }
 ]
+
 
 export function CreateCategoryDialog({
     open,
@@ -62,19 +63,17 @@ export function CreateCategoryDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {/* Modal: w-[448px], p-6, gap-6, border border-gray-200, rounded-xl */}
-            <DialogContent className="flex flex-col items-start p-6 gap-6 w-[448px] bg-white border border-gray-200 rounded-xl">
-
+            <DialogContent className="w-full max-w-[448px] p-6 gap-6">
                 {/* Header: flex-row, gap-4, h-[46px] */}
-                <DialogHeader className="flex flex-row items-start gap-4 w-full h-[46px] p-0">
+                <DialogHeader className="flex flex-row items-start gap-4 w-full h-[46px]">
                     {/* Frame 1: flex-col, gap-0.5, flex-1 */}
                     <div className="flex flex-col justify-center gap-0.5 flex-1">
                         {/* Nova categoria: text-base font-semibold text-gray-800 */}
-                        <DialogTitle className="w-full text-base font-semibold leading-6 text-gray-800 font-sans">
+                        <DialogTitle className="w-full text-base font-semibold leading-6 text-gray-800 ">
                             Nova categoria
                         </DialogTitle>
                         {/* Subtítulo: text-sm font-normal text-gray-600 */}
-                        <DialogDescription className="w-full text-sm font-normal leading-5 text-gray-600 font-sans">
+                        <DialogDescription className="w-full text-sm font-normal leading-5 text-gray-600 ">
                             Organize suas transações com categorias
                         </DialogDescription>
                     </div>
@@ -87,7 +86,7 @@ export function CreateCategoryDialog({
                     {/* Título: flex-col gap-2 */}
                     <div className="flex flex-col items-start gap-2 w-full">
                         {/* Label: text-sm font-medium text-gray-700 */}
-                        <Label className="w-full text-sm font-medium leading-5 text-gray-700 font-sans">
+                        <Label className="w-full text-sm font-medium leading-5 text-gray-700 ">
                             Título
                         </Label>
                         {/* Input: h-12 px-3 py-3.5 border border-gray-300 rounded-lg */}
@@ -96,7 +95,7 @@ export function CreateCategoryDialog({
                             placeholder="Ex. Alimentação"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400 text-base font-normal font-sans focus:outline-none"
+                            className="w-full h-12 px-3  py-[14px] border border-gray-300 rounded-lg"
                         />
                     </div>
 
@@ -104,11 +103,11 @@ export function CreateCategoryDialog({
                     <div className="flex flex-col items-start gap-2 w-full">
                         <div className="flex flex-row items-center gap-2 w-full">
                             {/* Label: text-sm font-medium text-gray-700 */}
-                            <Label className="text-sm font-medium leading-5 text-gray-700 font-sans">
+                            <Label className="text-sm font-medium leading-5 text-gray-700 ">
                                 Descrição
                             </Label>
                             {/* Helper (Opcional): text-xs text-gray-500 */}
-                            <span className="text-xs font-normal leading-4 text-gray-500 font-sans">
+                            <span className="text-xs font-normal leading-4 text-gray-500 ">
                                 Opcional
                             </span>
                         </div>
@@ -118,20 +117,20 @@ export function CreateCategoryDialog({
                             placeholder="Descrição da categoria"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder:text-gray-400 text-base font-normal font-sans focus:outline-none"
+                            className="w-full h-12 px-3  py-[14px] border border-gray-300 rounded-lg"
                         />
                     </div>
 
                     {/* Ícone: flex-col gap-2 */}
                     <div className="flex flex-col items-start gap-2 w-full">
                         {/* Label: text-sm font-medium text-gray-700 */}
-                        <Label className="w-full text-sm font-medium leading-5 text-gray-700 font-sans">
+                        <Label className="w-full text-sm font-medium leading-5 text-gray-700 ">
                             Ícone
                         </Label>
                         {/* Frame 2: flex-row flex-wrap gap-2 */}
-                        <div className="flex flex-row flex-wrap items-start content-start gap-2 w-full">
+                        <div className="flex flex-row flex-wrap items-start content-start gap-2 w-[398px]">
                             {icons.map(({ key, icon: Icon }) => (
-                                <Button
+                                <button
                                     key={key}
                                     type="button"
                                     onClick={() => setSelectedIcon(key)}
@@ -142,7 +141,7 @@ export function CreateCategoryDialog({
                                         }`}
                                 >
                                     <Icon className={`w-5 h-5 ${selectedIcon === key ? "text-gray-600" : "text-gray-500"}`} />
-                                </Button>
+                                </button>
                             ))}
                         </div>
                     </div>
@@ -150,7 +149,7 @@ export function CreateCategoryDialog({
                     {/* Cor: flex-col gap-2 */}
                     <div className="flex flex-col items-start gap-2 w-full">
                         {/* Label: text-sm font-medium text-gray-700 */}
-                        <Label className="w-full text-sm font-medium leading-5 text-gray-700 font-sans">
+                        <Label className="w-full text-sm font-medium leading-5 text-gray-700 ">
                             Cor
                         </Label>
                         {/* Frame 2: flex-row gap-2 — cada item: w-[50px] h-[30px] p-1 rounded-lg border */}
@@ -177,7 +176,7 @@ export function CreateCategoryDialog({
                     <Button
                         type="button"
                         onClick={onSuccess}
-                        className="flex justify-center items-center px-4 py-3 gap-2 w-full h-12 bg-brand rounded-lg text-base font-medium font-sans text-white hover:bg-brand-dark transition-colors"
+                        className="flex justify-center items-center px-4 py-3 gap-2 w-full h-12 bg-brand rounded-lg text-base font-medium  text-white hover:bg-brand-dark transition-colors"
                     >
                         Salvar
                     </Button>

@@ -22,7 +22,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <Layout>
-      <Routes> 
+      <Routes>
         <Route 
           path="/login"
           element={

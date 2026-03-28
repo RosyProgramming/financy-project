@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Page } from "@/components/Page"
 import { Button } from "@/components/ui/button"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 
 // — tipos
@@ -78,20 +79,21 @@ export function TransactionsPage() {
             <div className="flex flex-col gap-8 w-full">
 
                 {/* Header */}
-                <div className="flex flex-row justify-between items-center w-full">
-                    <div className="flex flex-col gap-0.5 flex-1">
-                        <h1 className="text-2xl font-bold leading-8 text-gray-800 font-sans">
-                            Transações
-                        </h1>
-                        <p className="text-base font-normal leading-6 text-gray-600 font-sans">
-                            Gerencie todas as suas transações financeiras
-                        </p>
-                    </div>
+                <Card className="flex flex-row justify-between items-center w-full h-[58px] ring-0 py-0">
+                    <CardHeader className="flex flex-col gap-0.5 flex-1 px-0">
+                        <CardTitle className="text-2xl font-bold leading-8 text-gray-800 font-sans">
+                        Transações
+                        </CardTitle>
+                        <CardDescription className="text-base font-normal leading-6 text-gray-600 font-sans">
+                        Gerencie todas as suas transações financeiras
+                        </CardDescription>
+                    </CardHeader>
+
                     <Button className="flex items-center gap-2 px-3 py-2 h-9 bg-brand rounded-lg text-sm font-medium text-white hover:bg-brand-dark transition-colors">
                         <Plus className="w-4 h-4" />
                         Nova transação
                     </Button>
-                </div>
+                </Card>
 
                 {/* Filtros */}
                 <div className="flex flex-row items-start px-6 py-5 gap-4 w-full bg-white border border-gray-200 rounded-xl">
