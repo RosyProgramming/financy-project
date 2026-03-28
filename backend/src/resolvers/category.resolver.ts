@@ -5,6 +5,7 @@ import { CreateCategoryInput, UpdateCategoryInput } from "../dtos/input/category
 import { IsAuth } from "../middlewares/auth.middleware"
 import { UserModel } from "../models/user.models"
 import { GqlUser } from "../graphql/decorators/user.decorator"
+import { CategorySummaryModel } from "../models/category-summary.model"
 
 @Resolver(() => CategoryModel)
 @UseMiddleware(IsAuth)
@@ -25,6 +26,13 @@ export class CategoryResolver {
     @GqlUser() user: UserModel
   ) {
     return this.service.list(user.id)
+  }
+
+  @Query(() => CategorySummaryModel)
+  async categorySummary(
+    @GqlUser() user: UserModel
+  ) {
+    return this.service.getSummary(user.id)
   }
 
   @Mutation(() => CategoryModel)

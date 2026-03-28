@@ -19,6 +19,12 @@ type CategoryModel {
   userId: String!
 }
 
+type CategorySummaryModel {
+  mostUsedCategory: MostUsedCategory
+  totalCategories: Int!
+  totalTransactions: Int!
+}
+
 input CreateCategoryInput {
   color: String!
   description: String
@@ -64,6 +70,11 @@ type LoginOutput {
   user: UserModel!
 }
 
+type MostUsedCategory {
+  title: String!
+  total: Int!
+}
+
 type Mutation {
   createCategory(data: CreateCategoryInput!): CategoryModel!
   createTransaction(data: CreateTransactionInput!): TransactionModel!
@@ -81,6 +92,7 @@ type Mutation {
 
 type Query {
   categories: [CategoryModel!]!
+  categorySummary: CategorySummaryModel!
   getUser(id: String!): UserModel!
   transactions: [TransactionModel!]!
 }

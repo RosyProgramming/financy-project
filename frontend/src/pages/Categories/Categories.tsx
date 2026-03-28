@@ -8,17 +8,29 @@ import { CreateCategoryDialog } from "./components/CreateCategoryDialog"
 import { useState } from "react"
 import { iconMap, colorMap } from "@/constants/Category"
 import { useQuery } from "@apollo/client/react"
-import type { Category } from "../../types"
-import { LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
-
+import type { Category, CategorySummaryResponse } from "../../types"
+import { LIST_CATEGORIES, GET_CATEGORY_SUMMARY } from "@/lib/graphql/queries/Categories"
 
 export function CategoriesPage() {
 
     const [openDialog, setOpenDialog] = useState(false)
-    const { data, loading, refetch } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES)
+    
+    //  categorias
+    const {
+        data: categoriesData,
+        loading: loadingCategories,
+        refetch,
+    } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES)
 
-    const categories = data?.categories || []
-  console.log(categories)
+     // summary
+    const {
+        data: summaryData,
+        loading: loadingSummary,
+    } = useQuery<CategorySummaryResponse>(GET_CATEGORY_SUMMARY)
+
+    const categories = categoriesData?.categories || []
+    const summary = summaryData?.categorySummary
+
     return (
         <Page>
             <div className="w-full flex flex-col gap-8">
@@ -42,27 +54,32 @@ export function CategoriesPage() {
                     </Button>
                 </Card>
 
-                <CreateCategoryDialog open={openDialog} onOpenChange={setOpenDialog} onSuccess={() => {}} />
+                <CreateCategoryDialog open={openDialog} onOpenChange={setOpenDialog} onSuccess={() => refetch()} />
                              
 
                 {/* Main */}
                 <div className="flex flex-row items-start gap-6 w-full bg-gray-100">
+                    
                     <MainCard
                         icon={Tag}
-                        value="8"
+                        value={loadingSummary ? "..." : String(summary?.totalCategories ?? 0)}
                         label="TOTAL DE CATEGORIAS"
                     />
 
                     <MainCard
                         icon={ArrowUpDown}
-                        value="27"
+                        value={loadingSummary ? "..." : String(summary?.totalTransactions ?? 0)}
                         label="TOTAL DE TRANSAÇÕES"
                         iconColor="text-purple-base"
                     />
 
                     <MainCard
                         icon={Utensils}
-                        value="Alimentação"
+                        value={
+                        loadingSummary
+                            ? "..."
+                            : summary?.mostUsedCategory?.title ?? "—"
+                        }
                         label="CATEGORIA MAIS UTILIZADA"
                         iconColor="text-blue-base"
                     />
@@ -71,35 +88,35 @@ export function CategoriesPage() {
                 {/*Conteudo Principal*/}
                 <div className="w-full bg-gray-100 ">
                     <div className="grid grid-cols-4 gap-6">
-                        {/* <CategoryCard title="Alimentação" description="Restaurantes,delivery e refeições" items={12} tag="Alimentação" icon={Utensils} iconColor="text-blue-base bg-blue-light" color=" text-blue-dark bg-blue-light" />
-                        <CategoryCard title="Entretenimento" description="Cinema,jogos e lazer" items={2} tag="Entretenimento" icon={Ticket} iconColor="text-pink-base bg-pink-light" color="text-pink-dark bg-pink-light" />
-                        <CategoryCard title="Investimento" description="Aplicações e retornos financeiros" items={1} tag="Investimento" icon={PiggyBank} iconColor="text-green-base bg-green-light" color=" text-green-dark bg-green-light" />
-                        <CategoryCard title="Mercado" description="Compras de supermercado" items={3} tag="Mercado" icon={ShoppingCart} iconColor="text-orange-base bg-orange-light" color=" text-orange-dark bg-orange-light" />
-                        <CategoryCard title="Salário" description="Renda mensal e bonificações" items={3} tag="Salário" icon={BriefcaseBusiness} iconColor="text-green-base bg-green-light" color="text-green-dark bg-green-light" />
-                        <CategoryCard title="Saúde" description="Medicamentos,consultas e exames" items={0} tag="Saúde" icon={HeartPulse} iconColor="text-red-base bg-red-light" color=" text-red-dark bg-red-light" />
-                        <CategoryCard title="Transporte" description="Gasolina,transporte público e viagens" items={8} tag="Transporte" icon={CarFront} iconColor="text-purple-base bg-purple-light" color="text-purple-dark bg-purple-light" />
-                        <CategoryCard title="Utilidades" description="Energia,água,internet e telefone" items={7} tag="Utilidades" icon={ToolCase} iconColor="text-yellow-base bg-yellow-light" color="text-yellow-dark bg-yellow-light" /> */}
-                        {categories.map((category) => {
+                        {loadingCategories ? (
+                        Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="h-40 rounded-xl bg-gray-200 animate-pulse" />
+                        ))
+                        ) : categories.length === 0 ? (
+                        <p className="text-gray-500">Nenhuma categoria cadastrada</p>
+                        ) : (
+                        categories.map((category) => {
                             const Icon =
-                                iconMap[category.icon as keyof typeof iconMap] ?? Tag
+                            iconMap[category.icon as keyof typeof iconMap] ?? Tag
 
                             const colors =
-                                colorMap[category.color as keyof typeof colorMap] ??
-                                colorMap.blue
+                            colorMap[category.color as keyof typeof colorMap] ??
+                            colorMap.blue
 
                             return (
-                                <CategoryCard
-                                    key={category.id}
-                                    icon={Icon}
-                                    iconColor={colors.icon}
-                                    color={colors.tag}
-                                    title={category.title}
-                                    description={category.description}
-                                    items={category._count?.transactions ?? 0}
-                                    tag={category.title}
-                                />
+                            <CategoryCard
+                                key={category.id}
+                                icon={Icon}
+                                iconColor={colors.icon}
+                                color={colors.tag}
+                                title={category.title}
+                                description={category.description ?? '-'}
+                                items={category._count?.transactions ?? 0}
+                                tag={category.title}
+                            />
                             )
-                        })}
+                        })
+                        )}
                     </div>
                 </div>
             </div>

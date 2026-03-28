@@ -37,6 +37,22 @@ export interface Category {
   }
 }
 
+export interface MostUsedCategory {
+  title: string
+  total: number
+}
+
+export interface CategorySummary {
+  categories: Category[]
+  totalCategories: number
+  totalTransactions: number
+  mostUsedCategory?: MostUsedCategory | null
+}
+
+export interface CategorySummaryResponse {
+  categorySummary: CategorySummary
+}
+
 export interface Transaction {
   id: string
   description: string

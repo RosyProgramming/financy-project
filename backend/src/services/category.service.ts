@@ -25,9 +25,61 @@ export class CategoryService {
         },
       },
       orderBy: {
-        createdAt: "desc"
+        title: "asc"
       }
     })
+  }
+
+ async getSummary(userId: string) {
+
+    // total de categorias
+    const totalCategories = await prismaClient.category.count({
+      where: { userId },
+    })
+
+    // total de transações do usuário
+    const totalTransactions = await prismaClient.transaction.count({
+      where: { userId },
+    })
+
+    // categoria mais usada
+    const mostUsed = await prismaClient.transaction.groupBy({
+      by: ["categoryId"],
+      where: { userId },
+      _count: {
+        categoryId: true,
+      },
+      orderBy: {
+        _count: {
+          categoryId: "desc",
+        },
+      },
+      take: 1,
+    })
+
+    let mostUsedCategory = null
+
+    if (mostUsed.length > 0) {
+      const category = await prismaClient.category.findUnique({
+        where: {
+          id: mostUsed[0].categoryId,
+        },
+        select: {
+          title: true,
+        },
+      })
+
+      mostUsedCategory = {
+        title: category?.title || "",
+        total: mostUsed[0]._count.categoryId,
+      }
+    }
+
+    return {
+      totalCategories,
+      totalTransactions,
+      mostUsedCategory,
+    }
   }
 
   async update(id: string, data: UpdateCategoryInput, userId: string) {
