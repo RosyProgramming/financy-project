@@ -1,5 +1,10 @@
-import { ObjectType, Field, ID } from "type-graphql"
-import { UserModel } from "./user.models"
+import { ObjectType, Field, ID, Int } from "type-graphql"
+
+@ObjectType()
+class CategoryCount {
+  @Field(() => Int)
+  transactions!: number
+}
 
 @ObjectType()
 export class CategoryModel {
@@ -27,4 +32,7 @@ export class CategoryModel {
 
   @Field(() => Date)
   updatedAt!: Date
+
+  @Field(() => CategoryCount, { nullable: true })
+  _count?: CategoryCount
 }

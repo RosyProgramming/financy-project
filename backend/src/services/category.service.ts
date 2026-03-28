@@ -19,6 +19,11 @@ export class CategoryService {
       where: {
         userId
       },
+      include: {
+        _count: {
+          select: { transactions: true },
+        },
+      },
       orderBy: {
         createdAt: "desc"
       }

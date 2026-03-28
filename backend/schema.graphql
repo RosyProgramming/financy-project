@@ -3,7 +3,12 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type CategoryCount {
+  transactions: Int!
+}
+
 type CategoryModel {
+  _count: CategoryCount
   color: String!
   createdAt: DateTimeISO!
   description: String
