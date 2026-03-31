@@ -9,15 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
-import {
-    BriefcaseBusiness, CarFront, HeartPulse, PiggyBank, ShoppingCart, Ticket,
-    ToolCase, Utensils, PawPrint, House, Gift, Dumbbell,
-    BookOpen, BaggageClaim, Mailbox, ReceiptText, CheckCircle
-} from "lucide-react"
 import { useMutation } from "@apollo/client/react"
 import { CREATE_CATEGORY } from "@/lib/graphql/mutations/Categories"
 import { toast } from "sonner";
 import { GET_CATEGORY_SUMMARY, LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
+import { colorMap, iconMap } from "@/constants/Category"
+import { CheckCircle } from "lucide-react"
 
 interface CreateCategoryDialogProps {
     open: boolean
@@ -25,35 +22,15 @@ interface CreateCategoryDialogProps {
     onSuccess: () => void
 }
 
-const icons = [
-    { key: "BriefcaseBusiness", icon: BriefcaseBusiness },
-    { key: "CarFront",          icon: CarFront },
-    { key: "HeartPulse",        icon: HeartPulse },
-    { key: "PiggyBank",         icon: PiggyBank },
-    { key: "ShoppingCart",      icon: ShoppingCart },
-    { key: "Ticket",            icon: Ticket },
-    { key: "wrench",            icon: ToolCase },
-    { key: "utensils",          icon: Utensils },
-    { key: "pawprint",          icon: PawPrint },
-    { key: "home",              icon: House },
-    { key: "gift",              icon: Gift },
-    { key: "dumbbell",          icon: Dumbbell },
-    { key: "bookopen",          icon: BookOpen },
-    { key: "baggage",           icon: BaggageClaim },
-    { key: "mailbox",           icon: Mailbox },
-    { key: "receipt",           icon: ReceiptText }
-]
+const iconOptions = Object.entries(iconMap).map(([key, icon]) => ({
+  key,
+  icon
+}))
 
-const colors = [
-  { key: "green",  rect: "bg-green-base" },
-  { key: "blue",   rect: "bg-blue-base" },
-  { key: "purple", rect: "bg-purple-base" },
-  { key: "pink",   rect: "bg-pink-base" },
-  { key: "red",    rect: "bg-red-base" },
-  { key: "orange", rect: "bg-orange-base" },
-  { key: "yellow", rect: "bg-yellow-base" }
-]
-
+const colorOptions = Object.entries(colorMap).map(([key, value]) => ({
+  key,
+  rect: value.bg
+}))
 
 export function CreateCategoryDialog({
     open,
@@ -62,7 +39,7 @@ export function CreateCategoryDialog({
 }: CreateCategoryDialogProps) {
     const [title, setTitle]               = useState("")
     const [description, setDescription]   = useState("")
-    const [selectedIcon, setSelectedIcon] = useState("briefcase")
+    const [selectedIcon, setSelectedIcon] = useState("BriefcaseBusiness")
     const [selectedColor, setSelectedColor] = useState("green")
 
     const [createCategory, { loading }] = useMutation(CREATE_CATEGORY, {
@@ -182,7 +159,7 @@ export function CreateCategoryDialog({
                         </Label>
                     
                         <div className="flex flex-row flex-wrap items-start content-start gap-2 w-[398px]">
-                            {icons.map(({ key, icon: Icon }) => (
+                            {iconOptions.map(({ key, icon: Icon }) => (
                                 <button
                                     key={key}
                                     type="button"
@@ -207,7 +184,7 @@ export function CreateCategoryDialog({
                         </Label>
                        
                         <div className="flex flex-row items-start gap-2 w-full">
-                            {colors.map(({ key, rect }) => (
+                            {colorOptions.map(({ key, rect }) => (
                             <button
                                 key={key}
                                 type="button"
