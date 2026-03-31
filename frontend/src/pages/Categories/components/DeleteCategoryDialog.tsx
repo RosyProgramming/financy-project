@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog"
-import { LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
+import { GET_CATEGORY_SUMMARY, LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
 import { toast } from "sonner";
 import type { Category } from "@/types"
 import { useMutation } from "@apollo/client/react"
@@ -45,7 +45,7 @@ export function DeleteCategoryDialog({
             onOpenChange(false)
         },
             
-        refetchQueries: [LIST_CATEGORIES],
+        refetchQueries: [LIST_CATEGORIES, GET_CATEGORY_SUMMARY]
     })
 
     const handleDeleteCategory = async () => {

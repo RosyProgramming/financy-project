@@ -17,6 +17,7 @@ import {
 import { useMutation } from "@apollo/client/react"
 import { CREATE_CATEGORY } from "@/lib/graphql/mutations/Categories"
 import { toast } from "sonner";
+import { GET_CATEGORY_SUMMARY, LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
 
 interface CreateCategoryDialogProps {
     open: boolean
@@ -64,7 +65,9 @@ export function CreateCategoryDialog({
     const [selectedIcon, setSelectedIcon] = useState("briefcase")
     const [selectedColor, setSelectedColor] = useState("green")
 
-    const [ createCategory, { loading } ] = useMutation(CREATE_CATEGORY)
+    const [createCategory, { loading }] = useMutation(CREATE_CATEGORY, {
+        refetchQueries: [LIST_CATEGORIES, GET_CATEGORY_SUMMARY]
+    })
 
     const handleOpenChange = (isOpen: boolean) => {
         onOpenChange(isOpen)
