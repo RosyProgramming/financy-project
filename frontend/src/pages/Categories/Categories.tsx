@@ -11,11 +11,13 @@ import { useQuery } from "@apollo/client/react"
 import type { Category, CategorySummaryResponse } from "../../types"
 import { LIST_CATEGORIES, GET_CATEGORY_SUMMARY } from "@/lib/graphql/queries/Categories"
 import { EditCategoryDialog } from "./components/EditCategoryDialog"
+import { DeleteCategoryDialog } from "./components/DeleteCategoryDialog"
 
 export function CategoriesPage() {
 
     const [openDialog, setOpenDialog] = useState(false)
-    const [openEditCategoryDialog, setOpenEditCategoryDialog] = useState(false)
+    const [openEditDialog, setOpenEditDialog] = useState(false)
+    const [openDeletetDialog, setOpenDeleteDialog] = useState(false)
     const [category, setCategory] = useState<Category | null>(null)
 
     //  categorias
@@ -36,11 +38,12 @@ export function CategoriesPage() {
 
     const handleEditCategory = (editCategory: Category) => {
         setCategory(editCategory)
-        setOpenEditCategoryDialog(true)
+        setOpenEditDialog(true)
     }
 
     const handleDeleteCategory = (deleteCategory: Category) => {
-        
+        setCategory(deleteCategory)
+        setOpenDeleteDialog(true)
     }
 
     return (
@@ -136,10 +139,16 @@ export function CategoriesPage() {
             </div>
             
             <EditCategoryDialog
-                open={openEditCategoryDialog}
-                onOpenChange={setOpenEditCategoryDialog}
+                open={openEditDialog}
+                onOpenChange={setOpenEditDialog}
                 categoria={category}
                 onUpdated={()=> refetch()}
+            />
+
+            <DeleteCategoryDialog
+              open={openDeletetDialog}
+              onOpenChange={setOpenDeleteDialog}
+              categoria={category}
             />
 
         </Page>

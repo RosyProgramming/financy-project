@@ -15,7 +15,7 @@ import {
     BookOpen, BaggageClaim, Mailbox, ReceiptText, CheckCircle
 } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
-import { UPDATE_CATEGORIA  } from "@/lib/graphql/mutations/Categories"
+import { UPDATE_CATEGORY  } from "@/lib/graphql/mutations/Categories"
 import { toast } from "sonner";
 import type { Category } from "@/types"
 
@@ -87,7 +87,7 @@ export function EditCategoryDialog({
         }
     }
 
-    const [ updateCategoryMutation, {loading} ] = useMutation<UpdateCategoriesMudatitionData, UpdateCategoryVariables>(UPDATE_CATEGORIA, {
+    const [ updateCategoryMutation, {loading} ] = useMutation<UpdateCategoriesMudatitionData, UpdateCategoryVariables>(UPDATE_CATEGORY, {
         onCompleted: (res: UpdateCategoriesMudatitionData) => {
             setTitle("")
             setDescription("")

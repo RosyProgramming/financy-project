@@ -15,7 +15,7 @@ import {
     BookOpen, BaggageClaim, Mailbox, ReceiptText, CheckCircle
 } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
-import { CREATE_CATEGORIES } from "@/lib/graphql/mutations/Categories"
+import { CREATE_CATEGORY } from "@/lib/graphql/mutations/Categories"
 import { toast } from "sonner";
 
 interface CreateCategoryDialogProps {
@@ -64,7 +64,7 @@ export function CreateCategoryDialog({
     const [selectedIcon, setSelectedIcon] = useState("briefcase")
     const [selectedColor, setSelectedColor] = useState("green")
 
-    const [ createCategory, { loading } ] = useMutation(CREATE_CATEGORIES)
+    const [ createCategory, { loading } ] = useMutation(CREATE_CATEGORY)
 
     const handleOpenChange = (isOpen: boolean) => {
         onOpenChange(isOpen)

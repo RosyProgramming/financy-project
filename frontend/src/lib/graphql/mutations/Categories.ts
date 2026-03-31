@@ -1,7 +1,7 @@
 
 import { gql } from '@apollo/client'
 
-export const CREATE_CATEGORIES = gql`
+export const CREATE_CATEGORY = gql`
 mutation CreateCategory($data: CreateCategoryInput!) {
   createCategory(data: $data) {
     id
@@ -15,7 +15,7 @@ mutation CreateCategory($data: CreateCategoryInput!) {
   }
 }` 
 
-export const UPDATE_CATEGORIA = gql`
+export const UPDATE_CATEGORY = gql`
 mutation UpdateCategory($id: String!, $data: UpdateCategoryInput!) {
   updateCategory(id: $id, data: $data
   ) {
@@ -28,5 +28,10 @@ mutation UpdateCategory($id: String!, $data: UpdateCategoryInput!) {
     createdAt
     updatedAt
   }
+}
+`
+export const DELETE_CATEGORY = gql`
+mutation DeleteCategory($id: String!) {
+  deleteCategory(id: $id)
 }
 `
