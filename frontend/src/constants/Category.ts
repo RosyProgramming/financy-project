@@ -18,12 +18,12 @@ import {
 } from "lucide-react"
 
 export const iconMap = {
-  BriefcaseBusiness,
-  CarFront,
-  HeartPulse,
-  PiggyBank,
-  ShoppingCart,
-  Ticket,
+  BriefcaseBusiness: BriefcaseBusiness,
+  CarFront: CarFront,
+  HeartPulse: HeartPulse,
+  PiggyBank: PiggyBank,
+  ShoppingCart: ShoppingCart,
+  Ticket: Ticket,
   wrench: ToolCase,
   utensils: Utensils,
   pawprint: PawPrint,
