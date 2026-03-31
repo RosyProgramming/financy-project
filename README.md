@@ -25,7 +25,7 @@ Assim como na API, temos as seguintes funcionalidades e regras:
 - [ ]  Deve ser possível listar todas as transações
 - [x]  Deve ser possível criar uma categoria
 - [ ]  Deve ser possível deletar uma categoria
-- [ ]  Deve ser possível editar uma categoria
+- [x]  Deve ser possível editar uma categoria
 - [x]  Deve ser possível listar todas as categorias
 
 Além disso, também temos algumas regras importantes específicas para o front-end:

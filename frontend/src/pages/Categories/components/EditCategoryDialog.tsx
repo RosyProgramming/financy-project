@@ -8,20 +8,22 @@ import {
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
     BriefcaseBusiness, CarFront, HeartPulse, PiggyBank, ShoppingCart, Ticket,
     ToolCase, Utensils, PawPrint, House, Gift, Dumbbell,
     BookOpen, BaggageClaim, Mailbox, ReceiptText, CheckCircle
 } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
-import { CREATE_CATEGORIES } from "@/lib/graphql/mutations/Categories"
+import { UPDATE_CATEGORIA  } from "@/lib/graphql/mutations/Categories"
 import { toast } from "sonner";
+import type { Category } from "@/types"
 
-interface CreateCategoryDialogProps {
+interface EditCategoryDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSuccess: () => void
+    categoria: Category | null
+    onUpdated?: (categoria: Category) => void
 }
 
 const icons = [
@@ -54,90 +56,109 @@ const colors = [
 ]
 
 
-export function CreateCategoryDialog({
+export function EditCategoryDialog({
     open,
     onOpenChange,
-    onSuccess,
-}: CreateCategoryDialogProps) {
+    categoria,
+    onUpdated
+}: EditCategoryDialogProps) {
     const [title, setTitle]               = useState("")
     const [description, setDescription]   = useState("")
     const [selectedIcon, setSelectedIcon] = useState("briefcase")
     const [selectedColor, setSelectedColor] = useState("green")
 
-    const [ createCategory, { loading } ] = useMutation(CREATE_CATEGORIES)
 
-    const handleOpenChange = (isOpen: boolean) => {
-        onOpenChange(isOpen)
+    useEffect(() => {
+        setTitle(categoria?.title ?? "")
+        setDescription(categoria?.description ?? "")
+        setSelectedIcon(categoria?.icon ?? "briefcase")
+        setSelectedColor(categoria?.color ?? "green")
+    },[categoria])
 
-        if (!isOpen) {
+
+    type UpdateCategoriesMudatitionData = { updateCategory: Category }
+    type UpdateCategoryVariables = { 
+        id: string,
+        data: { 
+            title?: string
+            description?: string
+            icon?: string
+            color?: string
+        }
+    }
+
+    const [ updateCategoryMutation, {loading} ] = useMutation<UpdateCategoriesMudatitionData, UpdateCategoryVariables>(UPDATE_CATEGORIA, {
+        onCompleted: (res: UpdateCategoriesMudatitionData) => {
             setTitle("")
             setDescription("")
             setSelectedIcon("briefcase")
             setSelectedColor("green")
+
+            const updated = res.updateCategory
+
+            if(updated) {
+                onUpdated?.(updated)
+            }
+            onOpenChange(false)
         }
-    }
+    })
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    e.preventDefault()
 
-        try {
-            await createCategory({
+    if (!categoria) return
+
+    try {
+        await updateCategoryMutation({
             variables: {
+                id: categoria.id,
                 data: {
-                title,
-                description,
-                icon: selectedIcon,
-                color: selectedColor,
+                    title,
+                    description,
+                    icon: selectedIcon,
+                    color: selectedColor
                 }
             }
-            })
+        })
 
-            toast.success("Categoria criada com sucesso", {
-                icon: <CheckCircle className="text-success w-5 h-5" />
-            })
-            handleOpenChange(false)
-            onSuccess()
+        toast.success("Categoria atualizada com sucesso", {
+            icon: <CheckCircle className="text-success w-5 h-5" />
+        })
 
-        } catch (error: any) {
-            const message =
-                error?.graphQLErrors?.[0]?.message ||
-                error?.message ||
-                "Erro ao criar categoria"
 
-            toast.error(message, {
-                icon: <CheckCircle className="text-danger w-5 h-5" />
-            })
-        }
+    } catch (error: any) {
+        const message =
+            error?.graphQLErrors?.[0]?.message ||
+            error?.message ||
+            "Erro ao atualizar categoria"
+
+        toast.error(message, {
+            icon: <CheckCircle className="text-danger w-5 h-5" />
+        })
     }
+}
 
     return (
-        <Dialog open={open} onOpenChange={handleOpenChange}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="w-full max-w-[448px] p-6 gap-6">
-                
                 <DialogHeader className="flex flex-row items-start gap-4 w-full h-[46px]">
-                    
                     <div className="flex flex-col justify-center gap-0.5 flex-1">
-                        
                         <DialogTitle className="w-full text-base font-semibold leading-6 text-gray-800 ">
-                            Nova categoria
+                            Editar categoria
                         </DialogTitle>
-                       
                         <DialogDescription className="w-full text-sm font-normal leading-5 text-gray-600 ">
                             Organize suas transações com categorias
                         </DialogDescription>
                     </div>
-                   
                 </DialogHeader>
 
+               
                 <form onSubmit={handleSubmit} className="flex flex-col items-start gap-4 w-full">
 
-                
                     <div className="flex flex-col items-start gap-2 w-full">
-                     
                         <Label className="w-full text-sm font-medium leading-5 text-gray-700 ">
                             Título
                         </Label>
-                       
                         <Input
                             type="text"
                             placeholder="Ex. Alimentação"
@@ -148,19 +169,16 @@ export function CreateCategoryDialog({
                         />
                     </div>
 
-                   
+ 
                     <div className="flex flex-col items-start gap-2 w-full">
                         <div className="flex flex-row items-center gap-2 w-full">
-                        
                             <Label className="text-sm font-medium leading-5 text-gray-700 ">
                                 Descrição
                             </Label>
-                        
                             <span className="text-xs font-normal leading-4 text-gray-500 ">
                                 Opcional
                             </span>
                         </div>
-                       
                         <Input
                             type="text"
                             placeholder="Descrição da categoria"
@@ -171,13 +189,11 @@ export function CreateCategoryDialog({
                         />
                     </div>
 
-                  
+  
                     <div className="flex flex-col items-start gap-2 w-full">
-                     
                         <Label className="w-full text-sm font-medium leading-5 text-gray-700 ">
                             Ícone
                         </Label>
-                    
                         <div className="flex flex-row flex-wrap items-start content-start gap-2 w-[398px]">
                             {icons.map(({ key, icon: Icon }) => (
                                 <button
@@ -196,13 +212,13 @@ export function CreateCategoryDialog({
                         </div>
                     </div>
 
-                
+                   
                     <div className="flex flex-col items-start gap-2 w-full">
-                       
+                        
                         <Label className="w-full text-sm font-medium leading-5 text-gray-700 ">
                             Cor
                         </Label>
-                       
+                    
                         <div className="flex flex-row items-start gap-2 w-full">
                             {colors.map(({ key, rect }) => (
                             <button
@@ -222,7 +238,7 @@ export function CreateCategoryDialog({
                         </div>
                     </div>
 
-                   
+                    
                     <Button
                         type="submit"
                         className="flex justify-center items-center px-4 py-3 gap-2 w-full h-12 bg-brand rounded-lg text-base font-medium  text-white hover:bg-brand-dark transition-colors"
