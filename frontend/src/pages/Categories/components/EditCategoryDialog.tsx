@@ -54,7 +54,7 @@ export function EditCategoryDialog({
     },[categoria])
 
 
-    type UpdateCategoriesMudatitionData = { updateCategory: Category }
+    type UpdateCategoriesMutationData = { updateCategory: Category }
     type UpdateCategoryVariables = { 
         id: string,
         data: { 
@@ -65,8 +65,8 @@ export function EditCategoryDialog({
         }
     }
 
-    const [ updateCategoryMutation, {loading} ] = useMutation<UpdateCategoriesMudatitionData, UpdateCategoryVariables>(UPDATE_CATEGORY, {
-        onCompleted: (res: UpdateCategoriesMudatitionData) => {
+    const [ updateCategoryMutation, {loading} ] = useMutation<UpdateCategoriesMutationData, UpdateCategoryVariables>(UPDATE_CATEGORY, {
+        onCompleted: (res: UpdateCategoriesMutationData) => {
             setTitle("")
             setDescription("")
             setSelectedIcon("briefcase")

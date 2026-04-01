@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Page } from "@/components/Page"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CreateTransactionDialog } from "./components/CreateTransactionDialog"
 
 
 // — tipos
@@ -61,12 +62,19 @@ function formatAmount(amount: number, type: "entrada" | "saida") {
     return type === "entrada" ? `+ ${formatted}` : `- ${formatted}`
 }
 
+function formatMonthYear(date: string) {
+  const d = new Date(date)
+
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+}
+
 export function TransactionsPage() {
     const [search, setSearch]           = useState("")
     const [tipo, setTipo]               = useState("")
     const [categoria, setCategoria]     = useState("")
     const [periodo, setPeriodo]         = useState("")
     const [currentPage, setCurrentPage] = useState(1)
+    const [openDialog, setOpenDialog] = useState(false)
 
     const totalResults = 27
     const totalPages   = 3
@@ -89,7 +97,9 @@ export function TransactionsPage() {
                         </CardDescription>
                     </CardHeader>
 
-                    <Button className="flex items-center gap-2 px-3 py-2 h-9 bg-brand rounded-lg text-sm font-medium text-white hover:bg-brand-dark transition-colors">
+                    <Button 
+                        onClick={() => setOpenDialog(true)}
+                        className="flex items-center gap-2 px-3 py-2 h-9 bg-brand rounded-lg text-sm font-medium text-white hover:bg-brand-dark transition-colors">
                         <Plus className="w-4 h-4" />
                         Nova transação
                     </Button>
@@ -110,7 +120,7 @@ export function TransactionsPage() {
                                 placeholder="Buscar por descrição"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full h-12 pl-9 pr-3 py-3.5 border border-gray-300 rounded-lg bg-white placeholder:text-gray-400 text-base font-normal font-sans focus:outline-none"
+                                className="w-full h-8 pl-9 pr-3 border border-gray-300 rounded-lg bg-white placeholder:text-gray-400 text-base font-normal font-sans focus:outline-none"
                             />
                         </div>
                     </div>
@@ -121,7 +131,7 @@ export function TransactionsPage() {
                             Tipo
                         </Label>
                         <Select onValueChange={setTipo} value={tipo}>
-                            <SelectTrigger className={`w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans focus:ring-0 ${tipo ? "text-gray-800" : "text-gray-400"}`}>
+                            <SelectTrigger className={`w-full pr-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans focus:ring-0 ${tipo ? "text-gray-800" : "text-gray-400"}`}>
                                 <SelectValue placeholder="Todos" />
                             </SelectTrigger>
                             <SelectContent position="popper" side="bottom" sideOffset={8}
@@ -141,7 +151,7 @@ export function TransactionsPage() {
                             Categoria
                         </Label>
                         <Select onValueChange={setCategoria} value={categoria}>
-                            <SelectTrigger className={`w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans focus:ring-0 ${categoria ? "text-gray-800" : "text-gray-400"}`}>
+                            <SelectTrigger className={`w-full pr-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans focus:ring-0 ${categoria ? "text-gray-800" : "text-gray-400"}`}>
                                 <SelectValue placeholder="Todas" />
                             </SelectTrigger>
                             <SelectContent position="popper" side="bottom" sideOffset={8}
@@ -166,7 +176,7 @@ export function TransactionsPage() {
                             Período
                         </Label>
                         <Select onValueChange={setPeriodo} value={periodo}>
-                            <SelectTrigger className={`w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans focus:ring-0 ${periodo ? "text-gray-800" : "text-gray-400"}`}>
+                            <SelectTrigger className={`w-full pr-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans focus:ring-0 ${periodo ? "text-gray-800" : "text-gray-400"}`}>
                                 <SelectValue placeholder="Novembro / 2025" />
                             </SelectTrigger>
                             <SelectContent position="popper" side="bottom" sideOffset={8}
@@ -184,156 +194,162 @@ export function TransactionsPage() {
                 {/* Tabela */}
                <div className="flex flex-col w-full bg-white border border-gray-200 rounded-xl overflow-hidden">
 
-                <Table>
-                    {/* Cabeçalho */}
-                    <TableHeader>
-                        <TableRow className="border-b border-gray-200 hover:bg-transparent">
-                            <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans">
-                                Descrição
-                            </TableHead>
-                            <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-center w-[112px]">
-                                Data
-                            </TableHead>
-                            <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-center w-[200px]">
-                                Categoria
-                            </TableHead>
-                            <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-center w-[136px]">
-                                Tipo
-                            </TableHead>
-                            <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-right w-[200px]">
-                                Valor
-                            </TableHead>
-                            <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-right w-[120px]">
-                                Ações
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
+                    <Table>
+                        {/* Cabeçalho */}
+                        <TableHeader>
+                            <TableRow className="border-b border-gray-200 hover:bg-transparent">
+                                <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans">
+                                    Descrição
+                                </TableHead>
+                                <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-center w-[112px]">
+                                    Data
+                                </TableHead>
+                                <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-center w-[200px]">
+                                    Categoria
+                                </TableHead>
+                                <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-center w-[136px]">
+                                    Tipo
+                                </TableHead>
+                                <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-right w-[200px]">
+                                    Valor
+                                </TableHead>
+                                <TableHead className="px-6 py-5 text-xs font-medium tracking-[0.6px] uppercase text-gray-500 font-sans text-right w-[120px]">
+                                    Ações
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
 
-                    {/* Linhas dinâmicas */}
-                    <TableBody>
-                        {transactions.map((tx) => {
-                            const color = categoryColorMap[tx.categoryId] ?? {
-                                bg: "bg-gray-200", icon: "text-gray-500", tag: "bg-gray-200", tagText: "text-gray-700"
-                            }
+                        {/* Linhas dinâmicas */}
+                        <TableBody>
+                            {transactions.map((tx) => {
+                                const color = categoryColorMap[tx.categoryId] ?? {
+                                    bg: "bg-gray-200", icon: "text-gray-500", tag: "bg-gray-200", tagText: "text-gray-700"
+                                }
 
-                            return (
-                                <TableRow key={tx.id} className="h-[72px] border-b border-gray-200 hover:bg-transparent last:border-b-0">
+                                return (
+                                    <TableRow key={tx.id} className="h-[72px] border-b border-gray-200 hover:bg-transparent last:border-b-0">
 
-                                    {/* Descrição */}
-                                    <TableCell className="px-6">
-                                        <div className="flex flex-row items-center gap-4">
-                                            <div className={`flex items-center justify-center w-10 h-10 rounded-lg shrink-0 ${color.bg}`}>
-                                                <span className={`text-base ${color.icon}`}>
-                                                    {categoryIcons[tx.categoryId] ?? <span>•</span>}
+                                        {/* Descrição */}
+                                        <TableCell className="px-6">
+                                            <div className="flex flex-row items-center gap-4">
+                                                <div className={`flex items-center justify-center w-10 h-10 rounded-lg shrink-0 ${color.bg}`}>
+                                                    <span className={`text-base ${color.icon}`}>
+                                                        {categoryIcons[tx.categoryId] ?? <span>•</span>}
+                                                    </span>
+                                                </div>
+                                                <span className="text-base font-medium leading-6 text-gray-800 font-sans">
+                                                    {tx.description}
                                                 </span>
                                             </div>
-                                            <span className="text-base font-medium leading-6 text-gray-800 font-sans">
-                                                {tx.description}
+                                        </TableCell>
+
+                                        {/* Data */}
+                                        <TableCell className="px-6 text-sm font-normal leading-5 text-gray-600 font-sans text-center">
+                                            {tx.date}
+                                        </TableCell>
+
+                                        {/* Categoria */}
+                                        <TableCell className="px-6 text-center">
+                                            <span className={`px-3 py-1 rounded-full text-sm font-medium font-sans ${color.tag} ${color.tagText}`}>
+                                                {tx.categoryName}
                                             </span>
-                                        </div>
-                                    </TableCell>
+                                        </TableCell>
 
-                                    {/* Data */}
-                                    <TableCell className="px-6 text-sm font-normal leading-5 text-gray-600 font-sans text-center">
-                                        {tx.date}
-                                    </TableCell>
+                                        {/* Tipo */}
+                                        <TableCell className="px-6">
+                                            <div className="flex flex-row items-center justify-center gap-2">
+                                                {tx.type === "entrada" ? (
+                                                    <>
+                                                        <CircleArrowUp className="w-4 h-4 text-green-base" />
+                                                        <span className="text-sm font-medium leading-5 text-green-dark font-sans">Entrada</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CircleArrowDown className="w-4 h-4 text-red-base" />
+                                                        <span className="text-sm font-medium leading-5 text-red-dark font-sans">Saída</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </TableCell>
 
-                                    {/* Categoria */}
-                                    <TableCell className="px-6 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-sm font-medium font-sans ${color.tag} ${color.tagText}`}>
-                                            {tx.categoryName}
-                                        </span>
-                                    </TableCell>
+                                        {/* Valor */}
+                                        <TableCell className="px-6 text-sm font-semibold leading-5 text-gray-800 font-sans text-right">
+                                            {formatAmount(tx.amount, tx.type)}
+                                        </TableCell>
 
-                                    {/* Tipo */}
-                                    <TableCell className="px-6">
-                                        <div className="flex flex-row items-center justify-center gap-2">
-                                            {tx.type === "entrada" ? (
-                                                <>
-                                                    <CircleArrowUp className="w-4 h-4 text-green-base" />
-                                                    <span className="text-sm font-medium leading-5 text-green-dark font-sans">Entrada</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <CircleArrowDown className="w-4 h-4 text-red-base" />
-                                                    <span className="text-sm font-medium leading-5 text-red-dark font-sans">Saída</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </TableCell>
+                                        {/* Ações */}
+                                        <TableCell className="px-6">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="w-8 h-8 border-gray-300 hover:border-danger hover:bg-white"
+                                                >
+                                                    <Trash2 className="w-4 h-4 text-danger" />
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="w-8 h-8 border-gray-300 hover:border-gray-400 hover:bg-white"
+                                                >
+                                                    <SquarePen className="w-4 h-4 text-gray-700" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
 
-                                    {/* Valor */}
-                                    <TableCell className="px-6 text-sm font-semibold leading-5 text-gray-800 font-sans text-right">
-                                        {formatAmount(tx.amount, tx.type)}
-                                    </TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
 
-                                    {/* Ações */}
-                                    <TableCell className="px-6">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="w-8 h-8 border-gray-300 hover:border-danger hover:bg-white"
-                                            >
-                                                <Trash2 className="w-4 h-4 text-danger" />
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="w-8 h-8 border-gray-300 hover:border-gray-400 hover:bg-white"
-                                            >
-                                                <SquarePen className="w-4 h-4 text-gray-700" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-
-                {/* Footer / Paginação */}
-                <div className="flex flex-row justify-between items-center px-6 py-5 w-full h-[72px] border-t border-gray-200">
-                    <span className="text-sm font-medium text-gray-700 font-sans">
-                        1 a 10 | {totalResults} resultados
-                    </span>
-                    <div className="flex flex-row items-center gap-2">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                            className="w-8 h-8 border-gray-300 opacity-50 hover:opacity-100 hover:bg-white"
-                        >
-                            <ChevronLeft className="w-4 h-4 text-gray-700" />
-                        </Button>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    {/* Footer / Paginação */}
+                    <div className="flex flex-row justify-between items-center px-6 py-5 w-full h-[72px] border-t border-gray-200">
+                        <span className="text-sm font-medium text-gray-700 font-sans">
+                            1 a 10 | {totalResults} resultados
+                        </span>
+                        <div className="flex flex-row items-center gap-2">
                             <Button
-                                key={page}
+                                variant="outline"
                                 size="icon"
-                                onClick={() => setCurrentPage(page)}
-                                className={`w-8 h-8 rounded-lg text-sm font-medium font-sans transition-colors
-                                    ${currentPage === page
-                                        ? "bg-brand text-white hover:bg-brand-dark"
-                                        : "bg-white border border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-white"
-                                    }`}
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                className="w-8 h-8 border-gray-300 opacity-50 hover:opacity-100 hover:bg-white"
                             >
-                                {page}
+                                <ChevronLeft className="w-4 h-4 text-gray-700" />
                             </Button>
-                        ))}
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                            className="w-8 h-8 border-gray-300 hover:border-gray-400 hover:bg-white"
-                        >
-                            <ChevronRight className="w-4 h-4 text-gray-700" />
-                        </Button>
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                <Button
+                                    key={page}
+                                    size="icon"
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`w-8 h-8 rounded-lg text-sm font-medium font-sans transition-colors
+                                        ${currentPage === page
+                                            ? "bg-brand text-white hover:bg-brand-dark"
+                                            : "bg-white border border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-white"
+                                        }`}
+                                >
+                                    {page}
+                                </Button>
+                            ))}
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                className="w-8 h-8 border-gray-300 hover:border-gray-400 hover:bg-white"
+                            >
+                                <ChevronRight className="w-4 h-4 text-gray-700" />
+                            </Button>
+                        </div>
                     </div>
+        
                 </div>
+            </div>
 
-            </div>
-            </div>
+                <CreateTransactionDialog 
+                    open={openDialog} 
+                    onOpenChange={setOpenDialog} 
+                    onSuccess={() => {}} 
+                />
         </Page>
     )
 }

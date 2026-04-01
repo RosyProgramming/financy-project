@@ -110,29 +110,29 @@ export function CategoriesPage() {
                         ) : categories.length === 0 ? (
                         <p className="text-gray-500">Nenhuma categoria cadastrada</p>
                         ) : (
-                        categories.map((category) => {
-                            const Icon =
-                            iconMap[category.icon as keyof typeof iconMap] ?? Tag
+                            categories.map((category) => {
+                                const Icon =
+                                iconMap[category.icon as keyof typeof iconMap] ?? Tag
 
-                            const colors =
-                            colorMap[category.color as keyof typeof colorMap] ??
-                            colorMap.blue
+                                const colors =
+                                colorMap[category.color as keyof typeof colorMap] ??
+                                colorMap.blue
 
-                            return (
-                            <CategoryCard
-                                key={category.id}
-                                icon={Icon}
-                                iconColor={colors.icon}
-                                color={colors.tag}
-                                title={category.title}
-                                description={category.description ?? '-'}
-                                items={category._count?.transactions ?? 0}
-                                tag={category.title}
-                                onEdit={()=>handleEditCategory(category)}
-                                onDelete={()=>handleDeleteCategory(category)}
-                            />
-                            )
-                        })
+                                return (
+                                <CategoryCard
+                                    key={category.id}
+                                    icon={Icon}
+                                    iconColor={colors.icon}
+                                    color={colors.tag}
+                                    title={category.title}
+                                    description={category.description ?? '-'}
+                                    items={category._count?.transactions ?? 0}
+                                    tag={category.title}
+                                    onEdit={()=>handleEditCategory(category)}
+                                    onDelete={()=>handleDeleteCategory(category)}
+                                />
+                                )
+                            })
                         )}
                     </div>
                 </div>

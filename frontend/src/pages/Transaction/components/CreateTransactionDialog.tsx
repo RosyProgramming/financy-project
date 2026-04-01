@@ -17,11 +17,17 @@ import {
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { ChevronDown, CircleArrowDown, CircleArrowUp } from "lucide-react"
+import { CheckCircle, ChevronDown, CircleArrowDown, CircleArrowUp, TriangleAlert } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
 import { format } from "date-fns"
+import { toast } from "sonner"
+import type { Category, Transaction } from "@/types"
+import { useMutation, useQuery } from "@apollo/client/react"
+import { CREATE_TRANSACTION } from "@/lib/graphql/mutations/Transactions"
+import { useState } from "react"
+import { LIST_TRANSACTIONS } from "@/lib/graphql/queries/Transactions"
+import { LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
 
 interface CreateTransactionDialogProps {
   open: boolean
@@ -32,23 +38,26 @@ interface CreateTransactionDialogProps {
 export function CreateTransactionDialog({
   open,
   onOpenChange,
-    onSuccess
+  onSuccess,
 }: CreateTransactionDialogProps) {
 
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState<string>("")
   const [date, setDate] = useState<Date | undefined>()
-  const [type, setType] = useState<"despesa" | "receita">("despesa")
+  const [type, setType] = useState<"EXPENSE" | "INCOME">("EXPENSE")
   const [categoria, setCategoria] = useState("")
 
-  function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
-        // Remove tudo que não for dígito
+  //  categorias
+  const { data: categoriesData } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES)
+
+  const categories = categoriesData?.categories || []
+
+  //converte amount
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "")
-        
-        // Converte para centavos e formata como moeda
+
     const value = (Number(digits) / 100).toFixed(2)
 
-        // Formata para exibição: R$ 1.234,56
     const formatted = Number(value).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
@@ -57,29 +66,77 @@ export function CreateTransactionDialog({
     setAmount(digits === "" ? "" : formatted)
   }
 
-  function parseAmount(value: string) {
+  const parseAmount = (value: string) => {
     return (
       parseFloat(value.replace(/[R$\s.]/g, "").replace(",", ".")) || 0
     )
   }
 
-  function handleSubmit() {
-    if (!description || !amount || !date || !categoria) {
-      alert("Preencha todos os campos")
-      return
+  type CreateTransactionMutationData = { createTransaction: Transaction }
+
+  type CreateTransactionVariables = {
+    data: {
+      description?: string
+      date?: Date
+      amount?: number
+      type?: "INCOME" | "EXPENSE"
+      categoryId?: string
+      userId?: string
+      createdAt?: Date
+      updatedAt?: Date
     }
+  }
+
+  const [createTransaction, { loading }] = useMutation<CreateTransactionMutationData,CreateTransactionVariables>(CREATE_TRANSACTION, {
+    onCompleted: () => {
+      setDescription("")
+      setAmount("")
+      setDate(undefined)
+      setType("EXPENSE")
+      setCategoria("")
+
+      onOpenChange(false)
+      onSuccess()
+    },
+
+    //  refetchQueries: [LIST_TRANSACTIONS]
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
 
     const amountDecimal = parseAmount(amount)
 
-    console.log({
-      description,
-      amount: amountDecimal,
-      date,
-      type,
-      categoria,
-    })
+    if (!description || !amount || !date || !categoria) {
+      toast.warning("Preencha todos os campos", {
+        icon: <TriangleAlert className="text-danger w-5 h-5" />
+      })
+      return
+    }
 
-    onSuccess()
+    try {
+      await createTransaction({
+        variables: {
+          data: {
+            description,
+            amount: amountDecimal,
+            date,
+            type: type, 
+            categoryId: categoria,
+          }
+        }
+      })
+
+      toast.success("Transação criada com sucesso", {
+        icon: <CheckCircle className="text-success w-5 h-5" />
+      })
+
+    } catch (error: any) {
+      const message = error?.graphQLErrors?.[0]?.message || error?.message || "Erro ao criar transação"
+      toast.error(message, {
+        icon: <CheckCircle className="text-danger w-5 h-5" />
+      })
+    }
   }
 
   return (
@@ -102,17 +159,16 @@ export function CreateTransactionDialog({
         <div className="flex w-full p-2 border border-gray-200 rounded-xl">
           <Button
             type="button"
-            onClick={() => setType("despesa")}
+            onClick={() => setType("EXPENSE")}
             className={`flex-1 h-[46px] flex items-center justify-center gap-2 rounded-lg text-base transition
-              ${
-                type === "despesa"
-                  ? "bg-gray-100 border border-red-500 text-gray-800"
+              ${type === "EXPENSE"
+                  ? "bg-gray-100 border border-red-base text-gray-800"
                   : "bg-transparent border-transparent text-gray-600"
               }`}
           >
             <CircleArrowDown
               className={`w-4 h-4 ${
-                type === "despesa" ? "text-red-500" : "text-gray-400"
+                type === "EXPENSE" ? "text-red-base" : "text-gray-400"
               }`}
             />
             Despesa
@@ -120,17 +176,16 @@ export function CreateTransactionDialog({
 
           <Button
             type="button"
-            onClick={() => setType("receita")}
-                        className={`flex flex-row justify-center items-center px-3 py-3.5 gap-3 flex-1 h-[46px] rounded-lg font-sans text-base transition-all
-                            ${type === "receita"
-                                ? "bg-gray-100 border border-green-base"
-                                : "bg-transparent border-transparent shadow-none"
-              }`}
-          >
-                        <CircleArrowUp className={`w-4 h-4 ${type === "receita" ? "text-green-base" : "text-gray-400"}`} />
-                        <span className={type === "receita" ? "text-gray-800 font-medium" : "text-gray-600 font-normal"}>
-            Receita
-                        </span>
+            onClick={() => setType("INCOME")}
+            className={`flex flex-row justify-center items-center px-3 py-3.5 gap-3 flex-1 h-[46px] rounded-lg font-sans text-base transition-all
+                ${type === "INCOME"
+                    ? "bg-gray-100 border border-green-base"
+                    : "bg-transparent border-transparent shadow-none"
+              }`}>
+              <CircleArrowUp className={`w-4 h-4 ${type === "INCOME" ? "text-green-base" : "text-gray-400"}`} />
+              <span className={type === "INCOME" ? "text-gray-800 font-medium" : "text-gray-600 font-normal"}>
+                Receita
+              </span>
           </Button>
         </div>
 
@@ -205,14 +260,14 @@ export function CreateTransactionDialog({
               <SelectTrigger className={`w-full h-12 px-3 py-3.5 border border-gray-300 rounded-lg text-base font-normal font-sans ${categoria ? "text-gray-800" : "text-gray-400"}`}>
                 <SelectValue placeholder="Selecione" />
               </SelectTrigger>
-                            <SelectContent className="[&_[data-state=checked]_svg]:text-brand [&_[data-state=checked]_svg]:stroke-brand">
-                                <SelectGroup className="bg-white">
+              <SelectContent className="[&_[data-state=checked]_svg]:text-brand [&_[data-state=checked]_svg]:stroke-brand">
+                  <SelectGroup className="bg-white">
                   <SelectLabel>Categorias</SelectLabel>
-                  <SelectItem value="alimentacao">Alimentação</SelectItem>
-                  <SelectItem value="transporte">Transporte</SelectItem>
-                  <SelectItem value="saude">Saúde</SelectItem>
-                  <SelectItem value="lazer">Lazer</SelectItem>
-                  <SelectItem value="outros">Outros</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.title}
+                      </SelectItem>
+                    ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -220,8 +275,9 @@ export function CreateTransactionDialog({
 
           {/* Botão */}
           <Button
-            type="button"
+            type="submit"
             onClick={handleSubmit}
+            disabled={loading}
             className="h-12  px-4 py-3 gap-2 bg-brand hover:bg-brand-dark text-white text-base font-medium"
           >
             Salvar

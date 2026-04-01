@@ -10,6 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// INCOME → Receita / Entrada
+// EXPENSE → Despesa / Saída
+
 enum TransactionType {
   INCOME
   EXPENSE

@@ -58,8 +58,7 @@ export function DeleteCategoryDialog({
             }
             })
         } catch (error: any) {
-            const message =error?.graphQLErrors?.[0]?.message ||error?.message ||
-            "Erro ao excluir categoria"
+            const message =error?.graphQLErrors?.[0]?.message || "Não foi possível excluir categoria"
 
             toast.error(message, {
                 icon: <CheckCircle className="text-danger w-5 h-5" />
@@ -86,7 +85,7 @@ export function DeleteCategoryDialog({
                     onClick={handleDeleteCategory}
                     disabled={loading}
                     className="bg-brand text-white hover:bg-brand-dark transition-colors">
-                        Confirma
+                        Remover
                 </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
