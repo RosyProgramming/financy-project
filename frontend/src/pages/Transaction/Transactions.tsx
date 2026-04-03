@@ -58,7 +58,7 @@ export function TransactionsPage() {
     const { data: transactionData, loading: loadingList } = useQuery<TransactionsResponse>(
         LIST_TRANSACTIONS,
         {
-            fetchPolicy: "network-only",
+            fetchPolicy: "cache-and-network",
             variables: {
                 page: currentPage,
                 limit: 10,
