@@ -13,6 +13,8 @@ import { useQuery } from "@apollo/client/react"
 import type { Category, Transaction, TransactionMonthFilter } from "@/types"
 import { colorMap, iconMap } from "@/constants/Category"
 import { LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
+import { EditTransactionDialog } from "./components/EditTransactionDialog"
+import { DeleteTransactionDialog } from "./components/DeleteTransactionDialog"
 
 // — tipos
 // INCOME → Receita / Entrada
@@ -37,6 +39,9 @@ export function TransactionsPage() {
     const [periodo, setPeriodo]         = useState("")
     const [currentPage, setCurrentPage] = useState(1)
     const [openDialog, setOpenDialog]   = useState(false)
+    const [openEditDialog, setOpenEditDialog] = useState(false)
+    const [openDeletetDialog, setOpenDeleteDialog] = useState(false)
+    const [transaction, setTransaction] = useState<Transaction | null>(null)
     const [debouncedSearch, setDebouncedSearch] = useState("")
 
     useEffect(() => {
@@ -76,6 +81,16 @@ export function TransactionsPage() {
     
     const { data: monthsData, loading: monthsLoading } = useQuery<{ transactionMonths: TransactionMonthFilter[] }>(GET_TRANSACTION_MONTHS)
     const transactionMonthData = (monthsData?.transactionMonths ?? []).filter(m => !m.value.startsWith("1969"))
+
+    const handleEditTransaction = (editTransaction: Transaction) => {
+        setTransaction(editTransaction)
+        setOpenEditDialog(true)
+    }
+
+    const handleDeleteTransaction = (deleteTransaction: Transaction) => {
+        setTransaction(deleteTransaction)
+        setOpenDeleteDialog(true)
+    }
 
     return (
         <Page>
@@ -305,6 +320,7 @@ export function TransactionsPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
+                                                    onClick={() => handleDeleteTransaction(tx)}
                                                     className="w-8 h-8 border-gray-300 hover:border-danger hover:bg-white"
                                                 >
                                                     <Trash2 className="w-4 h-4 text-danger" />
@@ -312,6 +328,7 @@ export function TransactionsPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
+                                                    onClick={() => handleEditTransaction(tx)}
                                                     className="w-8 h-8 border-gray-300 hover:border-gray-400 hover:bg-white"
                                                 >
                                                     <SquarePen className="w-4 h-4 text-gray-700" />
@@ -373,6 +390,25 @@ export function TransactionsPage() {
                     onOpenChange={setOpenDialog} 
                     onSuccess={() => {}} 
                 />
+
+                {transaction && (
+                    <>
+                        <EditTransactionDialog
+                            key={`edit-${transaction.id}`}
+                            open={openEditDialog}
+                            onOpenChange={setOpenEditDialog}
+                            transaction={transaction}
+                            onSuccess={() => {}}
+                        />
+
+                        <DeleteTransactionDialog
+                            key={`delete-${transaction.id}`}
+                            open={openDeletetDialog}
+                            onOpenChange={setOpenDeleteDialog}
+                            transaction={transaction}
+                        />
+                    </>
+                )}
         </Page>
     )
 }

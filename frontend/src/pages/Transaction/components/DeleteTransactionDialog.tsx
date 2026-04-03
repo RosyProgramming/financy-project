@@ -8,58 +8,56 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog"
-import { GET_CATEGORY_SUMMARY, LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
 import { toast } from "sonner";
-import type { Category } from "@/types"
+import type { Transaction } from "@/types"
 import { useMutation } from "@apollo/client/react"
-import { DELETE_CATEGORY } from "@/lib/graphql/mutations/Categories";
 import { CheckCircle } from "lucide-react";
+import { DELETE_TRANSACTION } from "@/lib/graphql/mutations/Transactions";
+import { LIST_TRANSACTIONS } from "@/lib/graphql/queries/Transactions";
 
-interface DeleteCategoryDialogProps {
+interface DeleteTransactionDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    categoria: Category | null
-    onDelete?: (categoria: Category) => void
+    transaction: Transaction | null 
+    onDelete?: (transaction: Transaction) => void
 }
 
-export function DeleteCategoryDialog({
+export function DeleteTransactionDialog({
     open,
     onOpenChange,
-    categoria
-}: DeleteCategoryDialogProps) {
+    transaction
+}: DeleteTransactionDialogProps) {
 
-    type DeleteCategoryMutationData = {
-        deleteCategory: boolean
+    type DeleteTransactionMutationData = {
+        deleteTransaction: boolean
     }
 
-    type DeleteCategoryVariables = {
+    type DeleteTransactionVariables = {
         id: string
     }
 
-    const [deleteCategoryMutation, { loading }] = useMutation<DeleteCategoryMutationData,DeleteCategoryVariables>(DELETE_CATEGORY, {
+    const [deleteTransactionMutation, { loading }] = useMutation<DeleteTransactionMutationData,DeleteTransactionVariables>(DELETE_TRANSACTION, {
         onCompleted: () => {
-             toast.success("Categoria excluída com sucesso", {
+             toast.success("Transação excluída com sucesso", {
                 icon: <CheckCircle className="text-success w-5 h-5" />
             })
 
             onOpenChange(false)
         },
             
-        refetchQueries: [LIST_CATEGORIES, GET_CATEGORY_SUMMARY]
+        refetchQueries: [LIST_TRANSACTIONS]
     })
 
-    const handleDeleteCategory = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleDeleteTransaction = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!categoria) return
+        if (!transaction) return
 
         try {
-            await deleteCategoryMutation({
-            variables: {
-                id: categoria.id
-            }
+            await deleteTransactionMutation({
+            variables: { id: transaction.id }
             })
         } catch (error: any) {
-            const message =error?.graphQLErrors?.[0]?.message || "Não foi possível excluir categoria"
+            const message =error?.graphQLErrors?.[0]?.message || "Não foi possível excluir transação"
 
             toast.error(message, {
                 icon: <CheckCircle className="text-danger w-5 h-5" />
@@ -71,9 +69,9 @@ export function DeleteCategoryDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent className="bg-gray-100">
                 <AlertDialogHeader>
-                <AlertDialogTitle className="text-base font-semibold leading-6 text-gray-800">Deseja excluir essa categoria?</AlertDialogTitle>
+                <AlertDialogTitle className="text-base font-semibold leading-6 text-gray-800">Deseja excluir essa transação?</AlertDialogTitle>
                 <AlertDialogDescription className="text-sm text-gray-600 leading-5">
-                    Esta ação não pode ser desfeita. Isso excluirá permanentemente sua categoria de nossos servidores.
+                    Esta ação não pode ser desfeita. Isso excluirá permanentemente sua transação de nossos servidores.
                 </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -83,7 +81,7 @@ export function DeleteCategoryDialog({
                         Cancel
                 </AlertDialogCancel>
                 <AlertDialogAction 
-                    onClick={handleDeleteCategory}
+                    onClick={handleDeleteTransaction}
                     disabled={loading}
                     className="bg-brand text-white hover:bg-brand-dark transition-colors">
                         Remover

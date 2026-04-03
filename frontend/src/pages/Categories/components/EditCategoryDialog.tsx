@@ -77,11 +77,10 @@ export function EditCategoryDialog({
             if(updated) {
                 onUpdated?.(updated)
             }
-            onOpenChange(false)
         }
     })
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!categoria) return
@@ -103,6 +102,7 @@ export function EditCategoryDialog({
             icon: <CheckCircle className="text-success w-5 h-5" />
         })
 
+        onOpenChange(false)
 
     } catch (error: any) {
         const message =

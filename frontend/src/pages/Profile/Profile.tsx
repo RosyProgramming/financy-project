@@ -107,6 +107,7 @@ export function ProfilePage() {
                 </Button>
 
                 <Button
+                    type="button"
                     className="flex items-center justify-center gap-2 w-[382px] h-12 px-4 py-3 border border-gray-300 bg-white rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50 mx-auto"
                     onClick={handleLogout}
                 >

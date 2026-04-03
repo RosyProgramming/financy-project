@@ -13,6 +13,7 @@ query ListTransactions(
       date
       amount
       type
+      categoryId
       category {
         id
         title

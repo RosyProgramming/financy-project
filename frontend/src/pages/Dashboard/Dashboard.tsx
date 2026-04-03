@@ -96,7 +96,7 @@ export function DashboardPage() {
                         Categorias
                     </CardTitle>
                     <Link 
-                        to="/transactions"
+                        to="/categories"
                         className="flex items-center gap-1 text-sm text-brand font-medium hover:opacity-80">
                         Gerenciar
                         <ChevronRight className="w-4 h-4" />

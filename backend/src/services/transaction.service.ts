@@ -133,7 +133,8 @@ export class TransactionService {
 
     return prismaClient.transaction.update({
       where: { id },
-      data
+      data,
+      include: { category: true } 
     })
   }
 
