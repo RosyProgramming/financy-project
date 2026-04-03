@@ -19,20 +19,20 @@ export class DashboardService {
         ])
 
         return {
-        totalAmount: totalAmount._sum.amount ?? 0,
-        totalAmountIncome: totalAmountIncome._sum.amount ?? 0,
-        totalAmountExpense: totalAmountExpense._sum.amount ?? 0,
+            totalAmount: totalAmount._sum.amount ?? 0,
+            totalAmountIncome: totalAmountIncome._sum.amount ?? 0,
+            totalAmountExpense: totalAmountExpense._sum.amount ?? 0,
         }
     }
 
     async getRecentTransactions(userId: string) {
         return prismaClient.transaction.findMany({
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-        include: {
-            category: true
-        }
+            where: { userId },
+            orderBy: { createdAt: "desc" },
+            take: 5,
+            include: {
+                category: true
+            }
         })
     }
 
