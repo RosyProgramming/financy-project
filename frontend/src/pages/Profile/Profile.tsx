@@ -30,7 +30,7 @@ export function ProfilePage() {
                 icon: <CheckCircle className="text-success w-5 h-5" />,
             });
             }
-        } catch (error: any) {
+        } catch {
             toast.error("Erro ao atualizar usuário", {
                 icon: <CheckCircle className="text-danger w-5 h-5" />,
             });

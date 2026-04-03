@@ -62,7 +62,13 @@ export interface Transaction {
 
   userId: string
   categoryId: string
+  category: Category
 
   createdAt: string
   updatedAt: string
+}
+
+export interface TransactionMonthFilter{
+  value: string 
+  label: string 
 }

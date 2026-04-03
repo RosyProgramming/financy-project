@@ -38,3 +38,19 @@ export class UpdateTransactionInput {
   @Field(() => String, { nullable: true })
   type?: TransactionType
 }
+
+@InputType()
+export class TransactionFilters {
+
+  @Field(() => String,{ nullable: true })
+  search?: string
+
+  @Field(() => String, { nullable: true })
+  categoryId?: string
+
+  @Field(() => TransactionType, { nullable: true })
+  type?: TransactionType
+
+  @Field(() => String, { nullable: true })
+  month?: string // "2026-04"
+}

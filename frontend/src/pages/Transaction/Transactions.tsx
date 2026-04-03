@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Plus, Search, Trash2, SquarePen, ChevronLeft, ChevronRight, CircleArrowDown, CircleArrowUp } from "lucide-react"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -8,65 +8,27 @@ import { Page } from "@/components/Page"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CreateTransactionDialog } from "./components/CreateTransactionDialog"
-
+import { GET_TRANSACTION_MONTHS, LIST_TRANSACTIONS } from "@/lib/graphql/queries/Transactions"
+import { useQuery } from "@apollo/client/react"
+import type { Category, Transaction, TransactionMonthFilter } from "@/types"
+import { colorMap, iconMap } from "@/constants/Category"
+import { LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
 
 // — tipos
-interface Transaction {
-    id: string
-    description: string
-    date: string
-    categoryId: string
-    categoryName: string
-    type: "entrada" | "saida"
-    amount: number
+// INCOME → Receita / Entrada
+// EXPENSE → Despesa / Saída
+
+interface TransactionsResponse {
+  transactions: {
+    data: Transaction[]
+    meta: {
+      total: number
+      page: number
+      lastPage: number
+    }
+  }
 }
 
-// — mapa de cores por categoria
-const categoryColorMap: Record<string, { bg: string; icon: string; tag: string; tagText: string }> = {
-    alimentacao:    { bg: "bg-blue-light",   icon: "text-blue-base",   tag: "bg-blue-light",   tagText: "text-blue-dark" },
-    transporte:     { bg: "bg-purple-light", icon: "text-purple-base", tag: "bg-purple-light", tagText: "text-purple-dark" },
-    mercado:        { bg: "bg-orange-light", icon: "text-orange-base", tag: "bg-orange-light", tagText: "text-orange-dark" },
-    investimento:   { bg: "bg-green-light",  icon: "text-green-base",  tag: "bg-green-light",  tagText: "text-green-dark" },
-    utilidades:     { bg: "bg-yellow-light", icon: "text-yellow-base", tag: "bg-yellow-light", tagText: "text-yellow-dark" },
-    salario:        { bg: "bg-green-light",  icon: "text-green-base",  tag: "bg-green-light",  tagText: "text-green-dark" },
-    entretenimento: { bg: "bg-pink-light",   icon: "text-pink-base",   tag: "bg-pink-light",   tagText: "text-pink-dark" },
-}
-
-const categoryIcons: Record<string, React.ReactNode> = {
-    alimentacao:    <span>🍴</span>,
-    transporte:     <span>🚗</span>,
-    mercado:        <span>🛒</span>,
-    investimento:   <span>🐷</span>,
-    utilidades:     <span>🧰</span>,
-    salario:        <span>💼</span>,
-    entretenimento: <span>🎟</span>,
-}
-
-// — dados mock (substituir por useQuery futuramente)
-const mockTransactions: Transaction[] = [
-    { id: "1", description: "Jantar no Restaurante",   date: "30/11/25", categoryId: "alimentacao",    categoryName: "Alimentação",    type: "saida",   amount: 89.50 },
-    { id: "2", description: "Posto de Gasolina",       date: "29/11/25", categoryId: "transporte",     categoryName: "Transporte",     type: "saida",   amount: 100.00 },
-    { id: "3", description: "Compras no Mercado",      date: "28/11/25", categoryId: "mercado",        categoryName: "Mercado",        type: "saida",   amount: 156.80 },
-    { id: "4", description: "Retorno de Investimento", date: "26/11/25", categoryId: "investimento",   categoryName: "Investimento",   type: "entrada", amount: 340.25 },
-    { id: "5", description: "Aluguel",                 date: "26/11/25", categoryId: "utilidades",     categoryName: "Utilidades",     type: "saida",   amount: 1700.00 },
-    { id: "6", description: "Freelance",               date: "24/11/25", categoryId: "salario",        categoryName: "Salário",        type: "entrada", amount: 2500.00 },
-    { id: "7", description: "Compras Jantar",          date: "22/11/25", categoryId: "mercado",        categoryName: "Mercado",        type: "saida",   amount: 150.00 },
-    { id: "8", description: "Cinema",                  date: "18/12/25", categoryId: "entretenimento", categoryName: "Entretenimento", type: "saida",   amount: 88.00 },
-]
-
-function formatAmount(amount: number, type: "entrada" | "saida") {
-    const formatted = amount.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-    })
-    return type === "entrada" ? `+ ${formatted}` : `- ${formatted}`
-}
-
-function formatMonthYear(date: string) {
-  const d = new Date(date)
-
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
-}
 
 export function TransactionsPage() {
     const [search, setSearch]           = useState("")
@@ -74,13 +36,46 @@ export function TransactionsPage() {
     const [categoria, setCategoria]     = useState("")
     const [periodo, setPeriodo]         = useState("")
     const [currentPage, setCurrentPage] = useState(1)
-    const [openDialog, setOpenDialog] = useState(false)
+    const [openDialog, setOpenDialog]   = useState(false)
+    const [debouncedSearch, setDebouncedSearch] = useState("")
 
-    const totalResults = 27
-    const totalPages   = 3
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setCurrentPage(1)
+            setDebouncedSearch(search)
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [search, tipo, categoria, periodo])
+    
+    const { data: categoriesData } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES)
+    const categories = categoriesData?.categories || []
 
-    // substituir por useQuery quando integrar com backend
-    const transactions = mockTransactions
+    const { data: transactionData, loading: loadingList } = useQuery<TransactionsResponse>(
+        LIST_TRANSACTIONS,
+        {
+            fetchPolicy: "network-only",
+            variables: {
+                page: currentPage,
+                limit: 10,
+                filters: {
+                    search: debouncedSearch || undefined,
+                    categoryId: categoria && categoria !== "todas" ? categoria : undefined,
+                    type: tipo && tipo !== "todos" ? tipo : undefined,
+                    month: periodo && periodo !== "todos" ? periodo : undefined,
+                }
+            }
+        }
+    )
+
+    const transactions = transactionData?.transactions.data ?? []
+    const totalResults = transactionData?.transactions.meta.total ?? 0
+    const totalPages   = transactionData?.transactions.meta.lastPage ?? 1
+
+    const start = totalResults === 0 ? 0 : (currentPage - 1) * 10 + 1
+    const end   = Math.min(currentPage * 10, totalResults)
+    
+    const { data: monthsData, loading: monthsLoading } = useQuery<{ transactionMonths: TransactionMonthFilter[] }>(GET_TRANSACTION_MONTHS)
+    const transactionMonthData = (monthsData?.transactionMonths ?? []).filter(m => !m.value.startsWith("1969"))
 
     return (
         <Page>
@@ -90,10 +85,10 @@ export function TransactionsPage() {
                 <Card className="flex flex-row justify-between items-center w-full h-[58px] ring-0 py-0">
                     <CardHeader className="flex flex-col gap-0.5 flex-1 px-0">
                         <CardTitle className="text-2xl font-bold leading-8 text-gray-800 font-sans">
-                        Transações
+                            Transações
                         </CardTitle>
                         <CardDescription className="text-base font-normal leading-6 text-gray-600 font-sans">
-                        Gerencie todas as suas transações financeiras
+                            Gerencie todas as suas transações financeiras
                         </CardDescription>
                     </CardHeader>
 
@@ -138,8 +133,8 @@ export function TransactionsPage() {
                                 className="w-[var(--radix-select-trigger-width)] bg-white border border-gray-300 rounded-lg shadow-[0px_4px_15px_rgba(0,0,0,0.1)] [&_[data-state=checked]_svg]:text-brand [&_[data-state=checked]_svg]:stroke-brand">
                                 <SelectGroup>
                                     <SelectItem value="todos"   className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Todos</SelectItem>
-                                    <SelectItem value="entrada" className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Entrada</SelectItem>
-                                    <SelectItem value="saida"   className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Saída</SelectItem>
+                                    <SelectItem value="INCOME" className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Entrada</SelectItem>
+                                    <SelectItem value="EXPENSE"   className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Saída</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -158,13 +153,11 @@ export function TransactionsPage() {
                                 className="w-[var(--radix-select-trigger-width)] bg-white border border-gray-300 rounded-lg shadow-[0px_4px_15px_rgba(0,0,0,0.1)] [&_[data-state=checked]_svg]:text-brand [&_[data-state=checked]_svg]:stroke-brand">
                                 <SelectGroup>
                                     <SelectItem value="todas"          className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Todas</SelectItem>
-                                    <SelectItem value="alimentacao"    className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Alimentação</SelectItem>
-                                    <SelectItem value="transporte"     className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Transporte</SelectItem>
-                                    <SelectItem value="mercado"        className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Mercado</SelectItem>
-                                    <SelectItem value="investimento"   className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Investimento</SelectItem>
-                                    <SelectItem value="utilidades"     className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Utilidades</SelectItem>
-                                    <SelectItem value="salario"        className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Salário</SelectItem>
-                                    <SelectItem value="entretenimento" className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Entretenimento</SelectItem>
+                                    {categories.map((category) => (
+                                    <SelectItem  key={category.id} value={category.id} className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">
+                                        {category.title}
+                                    </SelectItem>
+                                    ))}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -182,9 +175,32 @@ export function TransactionsPage() {
                             <SelectContent position="popper" side="bottom" sideOffset={8}
                                 className="w-[var(--radix-select-trigger-width)] bg-white border border-gray-300 rounded-lg shadow-[0px_4px_15px_rgba(0,0,0,0.1)] [&_[data-state=checked]_svg]:text-brand [&_[data-state=checked]_svg]:stroke-brand">
                                 <SelectGroup>
-                                    <SelectItem value="2025-11" className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Novembro / 2025</SelectItem>
-                                    <SelectItem value="2025-10" className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Outubro / 2025</SelectItem>
-                                    <SelectItem value="2025-09" className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent">Setembro / 2025</SelectItem>
+                                    <SelectItem
+                                        key="todos"
+                                        value="todos"
+                                        className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent"
+                                    >
+                                        Todos
+                                    </SelectItem>
+                                    {monthsLoading ? (
+                                    <SelectItem value="loading" disabled>
+                                        Carregando...
+                                    </SelectItem>
+                                    ) : transactionMonthData.length ? (
+                                    transactionMonthData.map((month) => (
+                                        <SelectItem
+                                            key={month.value}
+                                            value={month.value}
+                                            className="text-base text-gray-800 font-sans data-[state=checked]:font-medium focus:bg-transparent"
+                                        >
+                                        {month.label}
+                                        </SelectItem>
+                                    ))
+                                    ) : (
+                                    <SelectItem value="empty" disabled>
+                                        Nenhum período encontrado
+                                    </SelectItem>
+                                    )}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -221,10 +237,10 @@ export function TransactionsPage() {
 
                         {/* Linhas dinâmicas */}
                         <TableBody>
-                            {transactions.map((tx) => {
-                                const color = categoryColorMap[tx.categoryId] ?? {
-                                    bg: "bg-gray-200", icon: "text-gray-500", tag: "bg-gray-200", tagText: "text-gray-700"
-                                }
+                            {!loadingList && transactions.map((tx) => {
+                                const color = colorMap[tx.category?.color as keyof typeof colorMap] ?? colorMap.blue
+                                const Icon = iconMap[tx.category?.icon as keyof typeof iconMap] ?? null
+                                const isIncome = tx.type === "INCOME"
 
                                 return (
                                     <TableRow key={tx.id} className="h-[72px] border-b border-gray-200 hover:bg-transparent last:border-b-0">
@@ -232,10 +248,8 @@ export function TransactionsPage() {
                                         {/* Descrição */}
                                         <TableCell className="px-6">
                                             <div className="flex flex-row items-center gap-4">
-                                                <div className={`flex items-center justify-center w-10 h-10 rounded-lg shrink-0 ${color.bg}`}>
-                                                    <span className={`text-base ${color.icon}`}>
-                                                        {categoryIcons[tx.categoryId] ?? <span>•</span>}
-                                                    </span>
+                                                <div className={`flex items-center justify-center w-10 h-10 rounded-lg shrink-0 ${color.icon}`}>
+                                                    {Icon && <Icon className="w-4 h-4" />}
                                                 </div>
                                                 <span className="text-base font-medium leading-6 text-gray-800 font-sans">
                                                     {tx.description}
@@ -245,28 +259,32 @@ export function TransactionsPage() {
 
                                         {/* Data */}
                                         <TableCell className="px-6 text-sm font-normal leading-5 text-gray-600 font-sans text-center">
-                                            {tx.date}
+                                            {new Intl.DateTimeFormat("pt-BR").format(new Date(tx.date))}
                                         </TableCell>
 
                                         {/* Categoria */}
                                         <TableCell className="px-6 text-center">
-                                            <span className={`px-3 py-1 rounded-full text-sm font-medium font-sans ${color.tag} ${color.tagText}`}>
-                                                {tx.categoryName}
+                                            <span className={`px-3 py-1 rounded-full text-sm font-medium font-sans ${color.tag}`}>
+                                                {tx.category?.title}
                                             </span>
                                         </TableCell>
 
                                         {/* Tipo */}
                                         <TableCell className="px-6">
                                             <div className="flex flex-row items-center justify-center gap-2">
-                                                {tx.type === "entrada" ? (
+                                                {isIncome ? (
                                                     <>
-                                                        <CircleArrowUp className="w-4 h-4 text-green-base" />
-                                                        <span className="text-sm font-medium leading-5 text-green-dark font-sans">Entrada</span>
+                                                    <CircleArrowUp className="w-4 h-4 text-green-base" />
+                                                    <span className="text-sm font-medium leading-5 text-green-dark font-sans">
+                                                        Entrada
+                                                    </span>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <CircleArrowDown className="w-4 h-4 text-red-base" />
-                                                        <span className="text-sm font-medium leading-5 text-red-dark font-sans">Saída</span>
+                                                    <CircleArrowDown className="w-4 h-4 text-red-base" />
+                                                    <span className="text-sm font-medium leading-5 text-red-dark font-sans">
+                                                        Saída
+                                                    </span>
                                                     </>
                                                 )}
                                             </div>
@@ -274,7 +292,11 @@ export function TransactionsPage() {
 
                                         {/* Valor */}
                                         <TableCell className="px-6 text-sm font-semibold leading-5 text-gray-800 font-sans text-right">
-                                            {formatAmount(tx.amount, tx.type)}
+                                            {isIncome ? "+" : "-"}{" "}
+                                                {tx.amount.toLocaleString("pt-BR", {
+                                                    style: "currency",
+                                                    currency: "BRL",
+                                            })}
                                         </TableCell>
 
                                         {/* Ações */}
@@ -296,7 +318,6 @@ export function TransactionsPage() {
                                                 </Button>
                                             </div>
                                         </TableCell>
-
                                     </TableRow>
                                 )
                             })}
@@ -306,12 +327,13 @@ export function TransactionsPage() {
                     {/* Footer / Paginação */}
                     <div className="flex flex-row justify-between items-center px-6 py-5 w-full h-[72px] border-t border-gray-200">
                         <span className="text-sm font-medium text-gray-700 font-sans">
-                            1 a 10 | {totalResults} resultados
+                           {start} a {end} | {totalResults} resultados
                         </span>
                         <div className="flex flex-row items-center gap-2">
                             <Button
                                 variant="outline"
                                 size="icon"
+                                disabled={currentPage === 1}
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 className="w-8 h-8 border-gray-300 opacity-50 hover:opacity-100 hover:bg-white"
                             >
@@ -334,6 +356,7 @@ export function TransactionsPage() {
                             <Button
                                 variant="outline"
                                 size="icon"
+                                disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 className="w-8 h-8 border-gray-300 hover:border-gray-400 hover:bg-white"
                             >

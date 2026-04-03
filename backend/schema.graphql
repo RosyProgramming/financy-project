@@ -90,11 +90,18 @@ type Mutation {
   updateUser(data: UpdateUserInput!): UserModel!
 }
 
+type PaginationMeta {
+  lastPage: Int!
+  page: Int!
+  total: Int!
+}
+
 type Query {
   categories: [CategoryModel!]!
   categorySummary: CategorySummaryModel!
   getUser(id: String!): UserModel!
-  transactions: [TransactionModel!]!
+  transactionMonths: [TransactionMonth!]!
+  transactions(filters: TransactionFilters, limit: Int!, page: Int!): TransactionPagination!
 }
 
 input RegisterInput {
@@ -118,8 +125,16 @@ type ResetPasswordOutput {
   message: String!
 }
 
+input TransactionFilters {
+  categoryId: String
+  month: String
+  search: String
+  type: TransactionType
+}
+
 type TransactionModel {
   amount: Float!
+  category: CategoryModel!
   categoryId: String!
   createdAt: DateTimeISO!
   date: DateTimeISO!
@@ -128,6 +143,16 @@ type TransactionModel {
   type: TransactionType!
   updatedAt: DateTimeISO!
   userId: String!
+}
+
+type TransactionMonth {
+  label: String!
+  value: String!
+}
+
+type TransactionPagination {
+  data: [TransactionModel!]!
+  meta: PaginationMeta!
 }
 
 enum TransactionType {

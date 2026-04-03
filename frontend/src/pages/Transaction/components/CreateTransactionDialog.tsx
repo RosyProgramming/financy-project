@@ -99,7 +99,7 @@ export function CreateTransactionDialog({
       onSuccess()
     },
 
-    //  refetchQueries: [LIST_TRANSACTIONS]
+     refetchQueries: [LIST_TRANSACTIONS]
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
