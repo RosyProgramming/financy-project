@@ -55,7 +55,7 @@ export function TransactionsPage() {
     const { data: categoriesData } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES)
     const categories = categoriesData?.categories || []
 
-    const { data: transactionData, loading: loadingList } = useQuery<TransactionsResponse>(
+    const { data: transactionData, loading: loadingList,  refetch: refetchTransactions } = useQuery<TransactionsResponse>(
         LIST_TRANSACTIONS,
         {
             fetchPolicy: "cache-and-network",
@@ -388,7 +388,9 @@ export function TransactionsPage() {
                 <CreateTransactionDialog 
                     open={openDialog} 
                     onOpenChange={setOpenDialog} 
-                    onSuccess={() => {}} 
+                    onSuccess={() => {
+                        refetchTransactions()
+                    }} 
                 />
 
                 {transaction && (
@@ -398,7 +400,9 @@ export function TransactionsPage() {
                             open={openEditDialog}
                             onOpenChange={setOpenEditDialog}
                             transaction={transaction}
-                            onSuccess={() => {}}
+                            onSuccess={() => {
+                                refetchTransactions()
+                            }}
                         />
 
                         <DeleteTransactionDialog

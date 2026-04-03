@@ -28,8 +28,9 @@ Assim como na API, temos as seguintes funcionalidades e regras:
 - [x]  Deve ser possível editar uma categoria
 - [x]  Deve ser possível listar todas as categorias
 - [x]  filtros da tela de transação funcionando
-- [ ]  lista dados no dashboard
-- [ ]  adicionar transação via dashboard
+
+- [x]  Lista dados no dashboard
+- [x]  Adicionar transação via dashboard
 
 Além disso, também temos algumas regras importantes específicas para o front-end:
 

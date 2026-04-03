@@ -122,7 +122,7 @@ export class TransactionService {
       label,
     }))
   }
-  
+
   async update(id: string, data: UpdateTransactionInput, userId: string) {
 
     const transaction = await prismaClient.transaction.findFirst({

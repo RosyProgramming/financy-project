@@ -28,6 +28,8 @@ import { CREATE_TRANSACTION } from "@/lib/graphql/mutations/Transactions"
 import { useState } from "react"
 import { LIST_TRANSACTIONS } from "@/lib/graphql/queries/Transactions"
 import { LIST_CATEGORIES } from "@/lib/graphql/queries/Categories"
+import { ptBR } from "date-fns/locale"
+import { GET_RECENT_TRANSACTIONS, GET_DASHBOARD_SUMMARY } from "@/lib/graphql/queries/Dashboard"
 
 interface CreateTransactionDialogProps {
   open: boolean
@@ -99,7 +101,19 @@ export function CreateTransactionDialog({
       onSuccess()
     },
 
-     refetchQueries: [LIST_TRANSACTIONS]
+      refetchQueries: [
+      {
+        query: LIST_TRANSACTIONS,
+        variables: { page: 1, limit: 10, filters: {} }
+      },
+      {
+        query: GET_RECENT_TRANSACTIONS
+      },
+      {
+        query: GET_DASHBOARD_SUMMARY
+      }
+    ]
+
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -231,6 +245,7 @@ export function CreateTransactionDialog({
                     selected={date}
                     onSelect={setDate}
                     defaultMonth={date}
+                    locale={ptBR}
                   />
                 </PopoverContent>
               </Popover>

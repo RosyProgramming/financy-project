@@ -72,3 +72,17 @@ export interface TransactionMonthFilter{
   value: string 
   label: string 
 }
+
+export interface DashboardSummary {
+  totalAmount: number
+  totalAmountIncome: number
+  totalAmountExpense: number
+}
+
+export interface CategoryDashboard {
+  title: string
+  icon: string
+  color: string
+  total: number
+  count: number
+}

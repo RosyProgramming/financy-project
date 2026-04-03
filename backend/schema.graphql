@@ -7,6 +7,14 @@ type CategoryCount {
   transactions: Int!
 }
 
+type CategoryDashboard {
+  color: String!
+  count: Float!
+  icon: String!
+  title: String!
+  total: Float!
+}
+
 type CategoryModel {
   _count: CategoryCount
   color: String!
@@ -43,6 +51,12 @@ input CreateTransactionInput {
 input CreateUserInput {
   email: String!
   fullName: String!
+}
+
+type DashboardSummary {
+  totalAmount: Float!
+  totalAmountExpense: Float!
+  totalAmountIncome: Float!
 }
 
 """
@@ -99,6 +113,9 @@ type PaginationMeta {
 type Query {
   categories: [CategoryModel!]!
   categorySummary: CategorySummaryModel!
+  dashboardCategories: [CategoryDashboard!]!
+  dashboardRecentTransactions: [TransactionModel!]!
+  dashboardSummary: DashboardSummary!
   getUser(id: String!): UserModel!
   transactionMonths: [TransactionMonth!]!
   transactions(filters: TransactionFilters, limit: Int!, page: Int!): TransactionPagination!
