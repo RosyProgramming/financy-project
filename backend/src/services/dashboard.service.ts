@@ -43,12 +43,19 @@ export class DashboardService {
             _sum: { amount: true },
             _count: { id: true },
 
-            orderBy: {
-            _count: {
-                id: 'desc' 
-            }
-            },
-
+           orderBy: [
+                {
+                    _count: {
+                    id: 'desc'
+                    }
+                },
+                {
+                    _sum: {
+                    amount: 'desc'
+                    }
+                }
+            ],
+            
             take: 5 
         })
 
