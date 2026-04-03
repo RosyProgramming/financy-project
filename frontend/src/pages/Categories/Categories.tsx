@@ -25,13 +25,17 @@ export function CategoriesPage() {
         data: categoriesData,
         loading: loadingCategories,
         refetch,
-    } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES)
+    } = useQuery<{ categories: Category[] }>(LIST_CATEGORIES, {
+        fetchPolicy: "cache-and-network"
+    })
 
      // summary
     const {
         data: summaryData,
         loading: loadingSummary,
-    } = useQuery<CategorySummaryResponse>(GET_CATEGORY_SUMMARY)
+    } = useQuery<CategorySummaryResponse>(GET_CATEGORY_SUMMARY, {
+        fetchPolicy: "cache-and-network"
+    })
 
     const categories = categoriesData?.categories || []
     const summary = summaryData?.categorySummary
