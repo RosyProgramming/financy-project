@@ -1,38 +1,155 @@
-## Backend
-## Funcionalidades e Regras
+# 💰 Financy
 
-- [x]  O usuário pode criar uma conta e fazer login
-- [x]  O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
-- [x]  Deve ser possível criar uma transação
-- [x]  Deve ser possível deletar uma transação
-- [x]  Deve ser possível editar uma transação
-- [x]  Deve ser possível listar todas as transações
-- [x]  Deve ser possível criar uma categoria
-- [x]  Deve ser possível deletar uma categoria
-- [x]  Deve ser possível editar uma categoria
-- [x]  Deve ser possível listar todas as categorias
+Aplicação FullStack de gerenciamento de finanças pessoais.
+Permite organizar receitas, despesas e categorias, com visualização em dashboard.
 
-## Frontend
-## Funcionalidades e Regras
+---
 
-Assim como na API, temos as seguintes funcionalidades e regras:
+## 🎨 Layout (Figma)
 
-- [X]  O usuário pode criar uma conta e fazer login
-- [x]  O usuário pode ver e gerenciar apenas as transações e categorias criadas por ele
-- [x]  Deve ser possível criar uma transação
-- [x]  Deve ser possível deletar uma transação
-- [x]  Deve ser possível editar uma transação
-- [x]  Deve ser possível listar todas as transações
-- [x]  Deve ser possível criar uma categoria
-- [x]  Deve ser possível deletar uma categoria
-- [x]  Deve ser possível editar uma categoria
-- [x]  Deve ser possível listar todas as categorias
-- [x]  filtros da tela de transação funcionando
+Design baseado no Figma:
+https://www.figma.com/community/file/1580994817007013257/financy-
 
-- [x]  Lista dados no dashboard
-- [x]  Adicionar transação via dashboard
+---
 
-Além disso, também temos algumas regras importantes específicas para o front-end:
+## 📸 Preview do Sistema
 
-- [x]  É obrigatória a criação de uma aplicação React usando GraphQL para consultas na API e Vite como `bundler`;
-- [x]  Siga o mais fielmente possível o layout do Figma;
+### 🔐 Autenticação
+
+![Login](./screens/login.png)
+
+### 🔐 Recuperar senha
+
+![Login](./screens/loginRecupera.png)
+![Login](./screens/redefinirSenha.png)
+
+### 👤 Editar perfil
+
+![Perfil](./screens/perfil.png)
+
+### 📊 Dashboard
+
+![Dashboard](./screens/dashboard.png)
+
+### 💸 Transações
+
+![Transações](./screens/transactions.png)
+
+### 🏷️ Categorias
+
+![Categorias](./screens/categories.png)
+
+---
+
+## 🎥 Demonstração
+![Demo](./screens/financy.gif)
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+### 🔧 Backend
+
+* TypeScript
+* GraphQL
+* Node.js + Express
+* Prisma ORM
+* SQLite
+* JWT
+* Bcrypt
+
+### 🎨 Frontend
+
+* TypeScript
+* React
+* Vite
+* Apollo Client
+* TailwindCSS
+* Shadcn UI
+* React Hook Form
+* Zod
+* Zustand
+
+---
+
+## 📋 Funcionalidades e Regras
+
+### 🔧 Backend
+
+* [x] O usuário pode criar uma conta e fazer login
+* [x] O usuário pode ver e gerenciar apenas seus dados
+* [x] Criar, editar, deletar e listar transações
+* [x] Criar, editar, deletar e listar categorias
+
+---
+
+### 🎨 Frontend
+
+* [x] Autenticação (login/cadastro)
+* [x] Gerenciamento de transações
+* [x] Gerenciamento de categorias
+* [x] Filtros de transações
+* [x] Dashboard com dados financeiros
+* [x] Adicionar transação via dashboard
+
+---
+
+### 📌 Regras obrigatórias do desafio
+
+* [x] React com TypeScript
+* [x] Vite como bundler
+* [x] GraphQL para comunicação
+* [x] Fidelidade ao layout do Figma
+
+---
+
+### 🚀 Requisitos adicionais
+
+* [x] Recuperação de senha (backend + frontend)
+
+---
+
+## ⚙️ Como rodar o projeto
+
+### Backend
+
+```bash
+cd backend
+npm install
+npx prisma migrate dev
+npm run dev
+```
+
+---
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 🧠 Arquitetura
+
+* Backend: regras de negócio + banco de dados
+* Frontend: interface e experiência
+* Comunicação via GraphQL
+
+---
+
+## ✨ Diferenciais
+
+* Dashboard com agregações (groupBy)
+* Organização por camadas
+* Validação com Zod
+* UI moderna com Tailwind + Shadcn
+* Implementação de recuperação de senha
+
+---
+
+## 👩‍💻 Autora
+
+Rosana Oliveira
