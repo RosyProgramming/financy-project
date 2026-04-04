@@ -67,7 +67,6 @@ https://www.figma.com/community/file/1580994817007013257/financy-
 * TailwindCSS
 * Shadcn UI
 * React Hook Form
-* Zod
 * Zustand
 
 ---
@@ -144,7 +143,6 @@ npm run dev
 
 * Dashboard com agregações (groupBy)
 * Organização por camadas
-* Validação com Zod
 * UI moderna com Tailwind + Shadcn
 * Implementação de recuperação de senha
 
