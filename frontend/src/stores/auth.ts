@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { LoginInput, RegisterInput, UpdateUserInput, User } from '../types';
+import type { ForgotPasswordInput, ForgotPasswordOutput, LoginInput, RegisterInput, ResetPasswordInput, ResetPasswordOutput, UpdateUserInput, User } from '../types';
 import { apolloClient } from '@/lib/graphql/apollo'
 import { REGISTER } from '@/lib/graphql/mutations/Register';
 import { LOGIN } from '@/lib/graphql/mutations/Login';
 import { UPDATE_USER } from '@/lib/graphql/mutations/Profile';
+import { FORGOT_PASSWORD, RESET_PASSWORD } from '@/lib/graphql/mutations/Password';
 
 type RegisterMutationData = {
     register: {
@@ -26,20 +27,30 @@ type UpdateUserMutationData = {
     updateUser: User;
 }
 
-interface AuthState{
- user: User | null;
- token: string | null;
- refreshToken: string | null;
- isAuthenticated: boolean;
- signup: (data: RegisterInput) => Promise<boolean>;
- login: (data: LoginInput) => Promise<boolean>;
- logout: () => void;
- updateUser: (data: UpdateUserInput) => Promise<boolean>;
+type ForgotPasswordMutationData = {
+  forgotPassword: ForgotPasswordOutput
+}
+
+type ResetPasswordMutationData = {
+  resetPassword: ResetPasswordOutput
+}
+
+interface AuthState {
+    user: User | null
+    token: string | null
+    refreshToken: string | null
+    isAuthenticated: boolean
+    signup: (data: RegisterInput) => Promise<boolean>
+    login: (data: LoginInput) => Promise<boolean>
+    logout: () => Promise<void>
+    updateUser: (data: UpdateUserInput) => Promise<boolean>
+    forgotPassword: (data: ForgotPasswordInput) => Promise<ForgotPasswordOutput | null>
+    resetPassword: (data: ResetPasswordInput) => Promise<ResetPasswordOutput | null>
 }
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set) => ({ 
+        (set): AuthState => ({ 
         user: null,
         token: null,
         refreshToken: null,
@@ -146,11 +157,35 @@ export const useAuthStore = create<AuthState>()(
                 console.log("Erro ao atualizar usuário:", error);
                 throw error;
             }
+        },
+        forgotPassword: async (forgotData: ForgotPasswordInput) => {
+            try {
+                const { data } = await apolloClient.mutate<ForgotPasswordMutationData>({
+                    mutation: FORGOT_PASSWORD,
+                    variables: { data: { email: forgotData.email } },
+                })
+                return data?.forgotPassword ?? null
+            } catch (error) {
+                console.log("Erro ao solicitar recuperação:", error)
+                throw error
+            }
+        },
+        resetPassword: async (resetData: ResetPasswordInput) => {
+            try {
+                const { data } = await apolloClient.mutate<ResetPasswordMutationData>({
+                    mutation: RESET_PASSWORD,
+                    variables: { data: { token: resetData.token, newPassword: resetData.newPassword } },
+                })
+                return data?.resetPassword ?? null
+            } catch (error) {
+                console.log("Erro ao redefinir senha:", error)
+                throw error
+            }
         }
     }),
-    {
-        name: 'auth-storage', // nome da chave no localStorage
-    }
+        {
+            name: 'auth-storage', // nome da chave no localStorage
+        }
     )
 )
     

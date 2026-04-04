@@ -36,3 +36,6 @@ Além disso, também temos algumas regras importantes específicas para o front-
 
 - [x]  É obrigatória a criação de uma aplicação React usando GraphQL para consultas na API e Vite como `bundler`;
 - [x]  Siga o mais fielmente possível o layout do Figma;
+  
+Requisitos adicionais 
+- [x] Criar recuperação de senha backend/frontend

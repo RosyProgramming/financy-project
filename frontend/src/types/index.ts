@@ -86,3 +86,21 @@ export interface CategoryDashboard {
   total: number
   count: number
 }
+
+export interface ForgotPasswordInput {
+  email: string
+}
+
+export interface ForgotPasswordOutput {
+  message: string
+  token: string
+}
+
+export interface ResetPasswordInput {
+  token: string
+  newPassword: string
+}
+
+export interface ResetPasswordOutput {
+  message: string
+}

@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ForgotPasswordDialog } from "./components/ForgotPasswordDialog"
 
 export function LoginPage() {
   // Inicializa direto do localStorage
@@ -18,6 +19,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [forgotOpen, setForgotOpen] = useState(false)
 
   const [errors, setErrors] = useState({
     email: "",
@@ -262,11 +264,15 @@ export function LoginPage() {
                 />
                 Lembrar-me
               </Label>
-              <a href="#" className="text-sm font-medium text-brand hover:underline">
+              <button
+                type="button"
+                onClick={() => setForgotOpen(true)}
+                className="text-sm font-medium text-brand hover:underline"
+              >
                 Recuperar a senha?
-              </a>
+              </button>
             </div>
-
+              
             {/* === BOTÃO LOGIN === */}
             <Button
               type="submit"
@@ -301,6 +307,10 @@ export function LoginPage() {
           </form>
         </CardContent>
       </Card>
+
+      {/* DIALOG DE ESQUECI MINHA SENHA */}
+      <ForgotPasswordDialog open={forgotOpen} onOpenChange={setForgotOpen} />
+      
     </div>
   );
 }
