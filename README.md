@@ -1,52 +1,53 @@
 # 💰 Financy
 
-Aplicação FullStack de gerenciamento de finanças pessoais.
-Permite organizar receitas, despesas e categorias, com visualização em dashboard.
+FullStack personal finance management application.  
+Allows users to organize income, expenses, and categories, with dashboard visualization.
 
 ---
 
 ## 🎨 Layout (Figma)
 
-Design baseado no Figma:
+Design based on the Figma file:  
 https://www.figma.com/community/file/1580994817007013257/financy-
 
 ---
 
-## 📸 Preview do Sistema
+## 📸 System Preview
 
-### 🔐 Autenticação
+### 🔐 Authentication
 
 ![Login](./screens/login.png)
 
-### 🔐 Recuperar senha
+### 🔐 Password Recovery
 
-![Login](./screens/loginRecupera.png)
-![Login](./screens/redefinirSenha.png)
+![Recover Password](./screens/loginRecupera.png)
+![Reset Password](./screens/redefinirSenha.png)
 
-### 👤 Editar perfil
+### 👤 Edit Profile
 
-![Perfil](./screens/perfil.png)
+![Profile](./screens/perfil.png)
 
 ### 📊 Dashboard
 
 ![Dashboard](./screens/dashboard.png)
 
-### 💸 Transações
+### 💸 Transactions
 
-![Transações](./screens/transactions.png)
+![Transactions](./screens/transactions.png)
 
-### 🏷️ Categorias
+### 🏷️ Categories
 
-![Categorias](./screens/categories.png)
+![Categories](./screens/categories.png)
 
 ---
 
-## 🎥 Demonstração
+## 🎥 Demo
+
 ![Demo](./screens/financy.gif)
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 Technologies Used
 
 ### 🔧 Backend
 
@@ -71,44 +72,44 @@ https://www.figma.com/community/file/1580994817007013257/financy-
 
 ---
 
-## 📋 Funcionalidades e Regras
+## 📋 Features and Rules
 
 ### 🔧 Backend
 
-* [x] O usuário pode criar uma conta e fazer login
-* [x] O usuário pode ver e gerenciar apenas seus dados
-* [x] Criar, editar, deletar e listar transações
-* [x] Criar, editar, deletar e listar categorias
+* [x] Users can create an account and log in
+* [x] Users can view and manage only their own data
+* [x] Create, edit, delete, and list transactions
+* [x] Create, edit, delete, and list categories
 
 ---
 
 ### 🎨 Frontend
 
-* [x] Autenticação (login/cadastro)
-* [x] Gerenciamento de transações
-* [x] Gerenciamento de categorias
-* [x] Filtros de transações
-* [x] Dashboard com dados financeiros
-* [x] Adicionar transação via dashboard
+* [x] Authentication (login/sign up)
+* [x] Transaction management
+* [x] Category management
+* [x] Transaction filters
+* [x] Dashboard with financial data
+* [x] Add transactions directly from the dashboard
 
 ---
 
-### 📌 Regras obrigatórias do desafio
+### 📌 Mandatory Challenge Requirements
 
-* [x] React com TypeScript
-* [x] Vite como bundler
-* [x] GraphQL para comunicação
-* [x] Fidelidade ao layout do Figma
-
----
-
-### 🚀 Requisitos adicionais
-
-* [x] Recuperação de senha (backend + frontend)
+* [x] React with TypeScript
+* [x] Vite as bundler
+* [x] GraphQL for communication
+* [x] Fidelity to the Figma design
 
 ---
 
-## ⚙️ Como rodar o projeto
+### 🚀 Additional Requirements
+
+* [x] Password recovery (backend + frontend)
+
+---
+
+## ⚙️ How to Run the Project
 
 ### Backend
 
@@ -131,23 +132,23 @@ npm run dev
 
 ---
 
-## 🧠 Arquitetura
+## 🧠 Architecture
 
-* Backend: regras de negócio + banco de dados
-* Frontend: interface e experiência
-* Comunicação via GraphQL
-
----
-
-## ✨ Diferenciais
-
-* Dashboard com agregações (groupBy)
-* Organização por camadas
-* UI moderna com Tailwind + Shadcn
-* Implementação de recuperação de senha
+* Backend: business rules + database
+* Frontend: interface and user experience
+* Communication via GraphQL
 
 ---
 
-## 👩‍💻 Autora
+## ✨ Highlights
+
+* Dashboard with aggregations (groupBy)
+* Layered architecture organization
+* Modern UI with Tailwind + Shadcn
+* Password recovery implementation
+
+---
+
+## 👩‍💻 Author
 
 Rosana Oliveira
