@@ -1,10 +1,26 @@
 import { create } from 'zustand'
+
 import { persist } from 'zustand/middleware'
-import type { ForgotPasswordInput, ForgotPasswordOutput, LoginInput, RegisterInput, ResetPasswordInput, ResetPasswordOutput, UpdateUserInput, User } from '../types';
+
+import type {
+    ForgotPasswordInput,
+    ForgotPasswordOutput,
+    LoginInput,
+    RegisterInput,
+    ResetPasswordInput,
+    ResetPasswordOutput,
+    UpdateUserInput,
+    User
+} from '../types';
+
 import { apolloClient } from '@/lib/graphql/apollo'
+
 import { REGISTER } from '@/lib/graphql/mutations/Register';
+
 import { LOGIN } from '@/lib/graphql/mutations/Login';
+
 import { UPDATE_USER } from '@/lib/graphql/mutations/Profile';
+
 import { FORGOT_PASSWORD, RESET_PASSWORD } from '@/lib/graphql/mutations/Password';
 
 type RegisterMutationData = {
@@ -28,11 +44,11 @@ type UpdateUserMutationData = {
 }
 
 type ForgotPasswordMutationData = {
-  forgotPassword: ForgotPasswordOutput
+    forgotPassword: ForgotPasswordOutput
 }
 
 type ResetPasswordMutationData = {
-  resetPassword: ResetPasswordOutput
+    resetPassword: ResetPasswordOutput
 }
 
 interface AuthState {
@@ -50,142 +66,178 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set): AuthState => ({ 
-        user: null,
-        token: null,
-        refreshToken: null,
-        isAuthenticated: false,
-        signup: async (registerData: RegisterInput) => {
-            try{
-                const { data } = await  apolloClient
-                .mutate<RegisterMutationData>({
-                    mutation: REGISTER,
-                    variables: { 
-                        data: {
-                            fullName: registerData.fullName,
-                            email: registerData.email,
-                            password: registerData.password
-                        } 
-                    },
-                })
+        (set): AuthState => ({
+            user: null,
+            token: null,
+            refreshToken: null,
+            isAuthenticated: false,
 
-                if(data?.register){
-                    const { token, user } = data.register;
-                    set({ user: {
-                        id: user.id,
-                        fullName: user.fullName,
-                        email: user.email,
-                        createdAt: user.createdAt,
-                        updatedAt: user.updatedAt
-                    }, token, isAuthenticated: false });
+            signup: async (registerData: RegisterInput) => {
+                try {
+                    const { data } = await apolloClient.mutate<RegisterMutationData>({
+                        mutation: REGISTER,
+                        variables: {
+                            data: {
+                                fullName: registerData.fullName,
+                                email: registerData.email,
+                                password: registerData.password
+                            }
+                        },
+                    });
 
-                    return true;
-                }
-                return false
+                    if (data?.register) {
+                        const { token, refreshToken, user } = data.register;
 
-            }catch(error){
-                console.log("Erro ao cadastrar:", error);
-                throw error;
-            }
-        },
-        login: async (loginData: LoginInput) => {
-            try {
-                const { data } = await apolloClient.mutate<LoginMutationData>({
-                    mutation: LOGIN,
-                    variables: {
-                        data: {
-                            email: loginData.email,
-                            password: loginData.password
-                        }
+                        set({
+                            user: {
+                                id: user.id,
+                                fullName: user.fullName,
+                                email: user.email,
+                                createdAt: user.createdAt,
+                                updatedAt: user.updatedAt
+                            },
+                            token,
+                            refreshToken,
+                            isAuthenticated: true
+                        });
+
+                        return true;
                     }
-                });
 
-                if (data?.login) {
-                    const { token, refreshToken, user } = data.login;
-                    set({ user: {
-                        id: user.id,
-                            fullName: user.fullName,
-                            email: user.email,
-                            createdAt: user.createdAt,
-                            updatedAt: user.updatedAt
-                    }, token, refreshToken, isAuthenticated: true });
-                    return true;
+                    return false;
+
+                } catch (error) {
+                    console.log("Erro ao cadastrar:", error);
+                    throw error;
                 }
-                return false;
-            } catch (error) {
-                console.log("Erro ao fazer login:", error);
-                throw error;
-            }
-        },
-        logout: async () => {
-            set({
-                user: null,
-                token: null,
-                refreshToken: null,
-                isAuthenticated: false,
-            });
+            },
 
-            // limpa o localStorage do persist
-             apolloClient.clearStore();
-        },
-        updateUser: async (userData: UpdateUserInput) => {
-            try {
-                const { data } = await apolloClient.mutate<UpdateUserMutationData>({
-                mutation: UPDATE_USER,
-                variables: {
-                    data: {
-                    fullName: userData.fullName,
-                    },
-                },
-                });
-
-                if (data?.updateUser) {
-                set((state) => ({
-                    user: state.user
-                    ? {
-                        ...state.user,
-                        ...data.updateUser,
+            login: async (loginData: LoginInput) => {
+                try {
+                    const { data } = await apolloClient.mutate<LoginMutationData>({
+                        mutation: LOGIN,
+                        variables: {
+                            data: {
+                                email: loginData.email,
+                                password: loginData.password
+                            }
                         }
-                    : null,
-                }));
+                    });
 
-                return true;
+                    if (data?.login) {
+                        const { token, refreshToken, user } = data.login;
+
+                        set({
+                            user: {
+                                id: user.id,
+                                fullName: user.fullName,
+                                email: user.email,
+                                createdAt: user.createdAt,
+                                updatedAt: user.updatedAt
+                            },
+                            token,
+                            refreshToken,
+                            isAuthenticated: true
+                        });
+
+                        return true;
+                    }
+
+                    return false;
+
+                } catch (error) {
+                    console.log("Erro ao fazer login:", error);
+                    throw error;
                 }
+            },
 
-                return false;
-            } catch (error) {
-                console.log("Erro ao atualizar usuário:", error);
-                throw error;
+            logout: async () => {
+                set({
+                    user: null,
+                    token: null,
+                    refreshToken: null,
+                    isAuthenticated: false,
+                });
+
+                // limpa o localStorage do persist
+                apolloClient.clearStore();
+            },
+
+            updateUser: async (userData: UpdateUserInput) => {
+                try {
+                    const { data } = await apolloClient.mutate<UpdateUserMutationData>({
+                        mutation: UPDATE_USER,
+                        variables: {
+                            data: {
+                                fullName: userData.fullName,
+                            },
+                        },
+                    });
+
+                    if (data?.updateUser) {
+                        set((state) => ({
+                            user: state.user
+                                ? {
+                                    ...state.user,
+                                    ...data.updateUser,
+                                }
+                                : null,
+                        }));
+
+                        return true;
+                    }
+
+                    return false;
+
+                } catch (error) {
+                    console.log("Erro ao atualizar usuário:", error);
+                    throw error;
+                }
+            },
+
+            forgotPassword: async (forgotData: ForgotPasswordInput) => {
+                try {
+                    const { data } = await apolloClient.mutate<ForgotPasswordMutationData>({
+                        mutation: FORGOT_PASSWORD,
+                        variables: {
+                            data: {
+                                email: forgotData.email
+                            }
+                        },
+                    });
+
+                    return data?.forgotPassword ?? null;
+
+                } catch (error) {
+                    console.log("Erro ao solicitar recuperação:", error);
+                    throw error;
+                }
+            },
+
+            resetPassword: async (resetData: ResetPasswordInput) => {
+                try {
+                    const { data } = await apolloClient.mutate<ResetPasswordMutationData>({
+                        mutation: RESET_PASSWORD,
+                        variables: {
+                            data: {
+                                token: resetData.token,
+                                newPassword: resetData.newPassword
+                            }
+                        },
+                    });
+
+                    return data?.resetPassword ?? null;
+
+                } catch (error) {
+                    console.log("Erro ao redefinir senha:", error);
+                    throw error;
+                }
             }
-        },
-        forgotPassword: async (forgotData: ForgotPasswordInput) => {
-            try {
-                const { data } = await apolloClient.mutate<ForgotPasswordMutationData>({
-                    mutation: FORGOT_PASSWORD,
-                    variables: { data: { email: forgotData.email } },
-                })
-                return data?.forgotPassword ?? null
-            } catch (error) {
-                console.log("Erro ao solicitar recuperação:", error)
-                throw error
-            }
-        },
-        resetPassword: async (resetData: ResetPasswordInput) => {
-            try {
-                const { data } = await apolloClient.mutate<ResetPasswordMutationData>({
-                    mutation: RESET_PASSWORD,
-                    variables: { data: { token: resetData.token, newPassword: resetData.newPassword } },
-                })
-                return data?.resetPassword ?? null
-            } catch (error) {
-                console.log("Erro ao redefinir senha:", error)
-                throw error
-            }
-        }
-    }),
+        }),
+
         {
-            name: 'auth-storage', // nome da chave no localStorage
+            name: 'auth-storage',
         }
     )
 )
-    
+

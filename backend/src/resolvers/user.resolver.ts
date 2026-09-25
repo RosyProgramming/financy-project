@@ -1,9 +1,17 @@
-import { UserModel } from './../models/user.models';
-import { CreateUserInput, UpdateUserInput } from './../dtos/input/user.input';
+import { UserModel } from './../models/user.models.js'
+
+import {
+  CreateUserInput,
+  UpdateUserInput,
+} from './../dtos/input/user.input.js'
+
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
-import { UserService } from '../services/user.service'
-import { IsAuth } from '../middlewares/auth.middleware'
-import { GqlUser } from '../graphql/decorators/user.decorator';
+
+import { UserService } from '../services/user.service.js'
+
+import { IsAuth } from '../middlewares/auth.middleware.js'
+
+import { GqlUser } from '../graphql/decorators/user.decorator.js'
 
 @Resolver(() => UserModel)
 @UseMiddleware(IsAuth)

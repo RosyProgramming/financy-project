@@ -1,9 +1,9 @@
 import { Arg, Mutation, Resolver } from "type-graphql"
-import { LoginInput, RegisterInput } from "../dtos/input/auth.input"
-import { LoginOutput,RegisterOutput } from "../dtos/output/auth.output"
-import { ForgotPasswordInput, ResetPasswordInput } from "../dtos/input/password.input"
-import { ForgotPasswordOutput, ResetPasswordOutput } from "../dtos/output/password.output"
-import { AuthService } from "../services/auth.service"
+import { LoginInput, RegisterInput } from "../dtos/input/auth.input.js"
+import { LoginOutput,RegisterOutput } from "../dtos/output/auth.output.js"
+import { ForgotPasswordInput, ResetPasswordInput } from "../dtos/input/password.input.js"
+import { ForgotPasswordOutput, ResetPasswordOutput } from "../dtos/output/password.output.js"
+import { AuthService } from "../services/auth.service.js"
 
 @Resolver()
 export class AuthResolver {

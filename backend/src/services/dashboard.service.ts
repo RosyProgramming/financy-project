@@ -1,4 +1,4 @@
-import { prismaClient } from "../../prisma/prisma"
+import { prismaClient } from "../../prisma/prisma.js"
 
 export class DashboardService {
 

@@ -84,8 +84,7 @@ export function EditTransactionDialog({
         refetchQueries: [LIST_TRANSACTIONS]
     })
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleSubmit = async () => {
 
         const amountDecimal = parseAmount(amount)
 
@@ -260,7 +259,7 @@ export function EditTransactionDialog({
 
           {/* Botão */}
           <Button
-            type="submit"
+            type="button"
             onClick={handleSubmit}
             disabled={loading}
             className="h-12  px-4 py-3 gap-2 bg-brand hover:bg-brand-dark text-white text-base font-medium"

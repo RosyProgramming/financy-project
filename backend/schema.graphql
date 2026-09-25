@@ -45,7 +45,7 @@ input CreateTransactionInput {
   categoryId: String!
   date: DateTimeISO!
   description: String!
-  type: String!
+  type: TransactionType!
 }
 
 input CreateUserInput {
@@ -189,7 +189,7 @@ input UpdateTransactionInput {
   categoryId: String
   date: DateTimeISO
   description: String
-  type: String
+  type: TransactionType
 }
 
 input UpdateUserInput {

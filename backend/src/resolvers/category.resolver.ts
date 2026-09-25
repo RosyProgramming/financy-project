@@ -1,11 +1,11 @@
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql"
-import { CategoryModel } from "../models/category.model"
-import { CategoryService } from "../services/category.service"
-import { CreateCategoryInput, UpdateCategoryInput } from "../dtos/input/category.input"
-import { IsAuth } from "../middlewares/auth.middleware"
-import { UserModel } from "../models/user.models"
-import { GqlUser } from "../graphql/decorators/user.decorator"
-import { CategorySummaryModel } from "../models/category-summary.model"
+import { CategoryModel } from "../models/category.model.js"
+import { CategoryService } from "../services/category.service.js"
+import { CreateCategoryInput, UpdateCategoryInput } from "../dtos/input/category.input.js"
+import { IsAuth } from "../middlewares/auth.middleware.js"
+import { UserModel } from "../models/user.models.js"
+import { GqlUser } from "../graphql/decorators/user.decorator.js"
+import { CategorySummaryModel } from "../models/category-summary.model.js"
 
 @Resolver(() => CategoryModel)
 @UseMiddleware(IsAuth)

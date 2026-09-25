@@ -1,10 +1,19 @@
 import { Query, Resolver, UseMiddleware } from "type-graphql"
-import { IsAuth } from "../middlewares/auth.middleware"
-import { UserModel } from "../models/user.models"
-import { GqlUser } from "../graphql/decorators/user.decorator"
-import { TransactionModel } from "../models/transaction.models"
-import { CategoryDashboard, DashboardSummary } from "../models/dashboard.models"
-import { DashboardService } from "../services/dashboard.service"
+
+import { IsAuth } from "../middlewares/auth.middleware.js"
+
+import { UserModel } from "../models/user.models.js"
+
+import { GqlUser } from "../graphql/decorators/user.decorator.js"
+
+import { TransactionModel } from "../models/transaction.models.js"
+
+import {
+  CategoryDashboard,
+  DashboardSummary,
+} from "../models/dashboard.models.js"
+
+import { DashboardService } from "../services/dashboard.service.js"
 
 @Resolver(() => DashboardSummary)
 @UseMiddleware(IsAuth)

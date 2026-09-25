@@ -48,8 +48,7 @@ export function DeleteCategoryDialog({
         refetchQueries: [LIST_CATEGORIES, GET_CATEGORY_SUMMARY]
     })
 
-    const handleDeleteCategory = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleDeleteCategory = async () => {
         if (!categoria) return
 
         try {

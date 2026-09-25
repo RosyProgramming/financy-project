@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "type-graphql"
-import { UserModel } from "../../models/user.models"
+import { UserModel } from "../../models/user.models.js"
 
 @ObjectType()
 export class RegisterOutput {

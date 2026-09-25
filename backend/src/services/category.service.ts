@@ -1,5 +1,5 @@
-import { prismaClient } from "../../prisma/prisma"
-import { CreateCategoryInput, UpdateCategoryInput } from "../dtos/input/category.input"
+import { prismaClient } from "../../prisma/prisma.js"
+import { CreateCategoryInput, UpdateCategoryInput } from "../dtos/input/category.input.js"
 
 export class CategoryService {
 

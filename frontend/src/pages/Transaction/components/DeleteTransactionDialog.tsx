@@ -48,8 +48,7 @@ export function DeleteTransactionDialog({
         refetchQueries: [LIST_TRANSACTIONS]
     })
 
-    const handleDeleteTransaction = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const handleDeleteTransaction = async () => {
         if (!transaction) return
 
         try {

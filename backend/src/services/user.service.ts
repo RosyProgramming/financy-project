@@ -1,5 +1,5 @@
-import { prismaClient } from '../../prisma/prisma'
-import { CreateUserInput, UpdateUserInput } from '../dtos/input/user.input'
+import { prismaClient } from '../../prisma/prisma.js'
+import { CreateUserInput, UpdateUserInput } from '../dtos/input/user.input.js'
 
 export class UserService {
 

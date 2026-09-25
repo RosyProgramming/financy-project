@@ -1,5 +1,5 @@
-import { prismaClient } from "../../prisma/prisma"
-import { CreateTransactionInput, UpdateTransactionInput } from "../dtos/input/transaction.input"
+import { prismaClient } from "../../prisma/prisma.js"
+import { CreateTransactionInput, UpdateTransactionInput } from "../dtos/input/transaction.input.js"
 
 export class TransactionService {
 

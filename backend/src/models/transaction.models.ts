@@ -1,14 +1,26 @@
-import { Field, GraphQLISODateTime, ID, ObjectType, Float, registerEnumType, Int } from "type-graphql"
-import { TransactionType } from "@prisma/client"
-import { CategoryModel } from "./category.model"
+import {
+  Field,
+  GraphQLISODateTime,
+  ID,
+  ObjectType,
+  Float,
+  registerEnumType,
+  Int,
+} from "type-graphql"
+
+import { CategoryModel } from "./category.model.js"
+
+export enum TransactionType {
+  INCOME = "INCOME",
+  EXPENSE = "EXPENSE",
+}
 
 registerEnumType(TransactionType, {
-  name: "TransactionType"
+  name: "TransactionType",
 })
 
 @ObjectType()
 export class TransactionModel {
-
   @Field(() => ID)
   id!: string
 
@@ -37,7 +49,7 @@ export class TransactionModel {
   updatedAt!: Date
 
   @Field(() => CategoryModel)
-  category: CategoryModel
+  category!: CategoryModel
 }
 
 @ObjectType()
@@ -64,9 +76,8 @@ export class TransactionPagination {
 @ObjectType()
 export class TransactionMonth {
   @Field(() => String)
-  value!: string // "2025-11"
+  value!: string
 
   @Field(() => String)
-  label!: string // "Novembro / 2025"
+  label!: string
 }
-

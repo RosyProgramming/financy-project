@@ -1,5 +1,16 @@
 node_modules
-# Keep environment variables out of version control
+
+# Environment variables
 .env
 
+# Prisma generated files
 /src/generated/prisma
+
+# Local database
+prisma/dev.db
+
+# Build
+dist
+
+# Vercel
+.vercel

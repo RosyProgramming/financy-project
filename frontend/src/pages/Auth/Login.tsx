@@ -38,7 +38,7 @@ export function LoginPage() {
   //PADRÃO DE ESTADO
   const getLabelState = (
     field: string,
-    value: string,
+    _value: string,
     error: string,
     disabled?: boolean
   ) => {

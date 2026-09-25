@@ -1,10 +1,31 @@
-import { Arg, Int, Mutation, Query, Resolver, UseMiddleware } from "type-graphql"
-import { TransactionService } from "../services/transaction.service"
-import { CreateTransactionInput, TransactionFilters, UpdateTransactionInput } from "../dtos/input/transaction.input"
-import { IsAuth } from "../middlewares/auth.middleware"
-import { UserModel } from "../models/user.models"
-import { TransactionModel, TransactionMonth, TransactionPagination } from "../models/transaction.models"
-import { GqlUser } from "../graphql/decorators/user.decorator"
+import {
+  Arg,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql"
+
+import { TransactionService } from "../services/transaction.service.js"
+
+import {
+  CreateTransactionInput,
+  TransactionFilters,
+  UpdateTransactionInput,
+} from "../dtos/input/transaction.input.js"
+
+import { IsAuth } from "../middlewares/auth.middleware.js"
+
+import { UserModel } from "../models/user.models.js"
+
+import {
+  TransactionModel,
+  TransactionMonth,
+  TransactionPagination,
+} from "../models/transaction.models.js"
+
+import { GqlUser } from "../graphql/decorators/user.decorator.js"
 
 @Resolver(() => TransactionModel)
 @UseMiddleware(IsAuth)
